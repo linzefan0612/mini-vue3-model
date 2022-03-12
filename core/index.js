@@ -1,14 +1,14 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-12 14:12:29
- * @LastEditTime: 2022-03-12 16:39:59
+ * @LastEditTime: 2022-03-12 17:54:32
  * @LastEditors: Lin zefan
  * @Description: 公用js
  * @FilePath: \mini-vue3\core\index.js
  *
  */
 import { effectWatch } from "./reactivity/index.js";
-import { mountElement } from "./renderer/index.js";
+import { mountElement, diff } from "./renderer/index.js";
 
 export function createApp(rootComponent) {
   return {
@@ -16,12 +16,23 @@ export function createApp(rootComponent) {
       if (typeof rootElement === "string") {
         rootElement = document.querySelector(rootElement);
       }
-
       const context = rootComponent.setup();
+      // 是否首次渲染
 
+      let initFlag = false;
+      let preVnode = null;
       effectWatch(() => {
         const vnode = rootComponent.render(context);
-        mountElement(vnode, rootElement);
+        if (!initFlag) {
+          console.log("首次渲染");
+          rootElement.innerHTML = "";
+          initFlag = true;
+          preVnode = vnode;
+          mountElement(vnode, rootElement);
+        } else {
+          console.log("更新视图");
+          diff(preVnode, vnode);
+        }
       });
     },
   };
