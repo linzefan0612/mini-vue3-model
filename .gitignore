@@ -1,0 +1,4 @@
+#忽略gitignore文件 
+*.log
+.git/
+/node_modules/
