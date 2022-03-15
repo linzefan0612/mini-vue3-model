@@ -1,7 +1,7 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-15 14:38:12
- * @LastEditTime: 2022-03-15 23:39:35
+ * @LastEditTime: 2022-03-15 23:45:15
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\README.md
@@ -12,7 +12,9 @@
 # How
 
 基于 vue3 源码实现一个 TDD mini 版的 vue<br>
+
 参考项目: [mini-vue](https://github.com/cuixiaorui/mini-vue) <br>
+
 实现过程记录：[传送门](https://juejin.cn/column/6975739941984665630)
 
 ## Tasking
