@@ -1,19 +1,19 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-14 15:46:54
- * @LastEditTime: 2022-03-15 17:11:07
+ * @LastEditTime: 2022-03-15 19:24:29
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\test\effect.spec.ts
  *
  */
 
-import { effect } from "../effect";
+import { effect, stop } from "../effect";
 import { reactive } from "../index";
 
 describe("effect", () => {
   // 实现effect侦听
-  it("it-effect", () => {
+  it("effect", () => {
     const user = reactive({
       age: 10,
     });
@@ -75,5 +75,35 @@ describe("effect", () => {
     run();
     // should have run
     expect(dummy).toBe(2);
+  });
+
+  // 实现effect的stop功能
+  it("stop", () => {
+    let dummy;
+    const obj = reactive({ prop: 1 });
+    const runner = effect(() => {
+      dummy = obj.prop;
+    });
+    obj.prop = 2;
+    expect(dummy).toBe(2);
+    // 使用了stop，删除了当前依赖
+    stop(runner);
+    obj.prop = 3;
+    expect(dummy).toBe(2);
+
+    // stopped effect should still be manually callable
+    runner();
+    expect(dummy).toBe(3);
+  });
+
+  // 实现effect的stop回调通知
+  it("onStop", () => {
+    const onStop = jest.fn();
+    const runner = effect(() => {}, {
+      onStop,
+    });
+
+    stop(runner);
+    expect(onStop).toBeCalledTimes(1);
   });
 });

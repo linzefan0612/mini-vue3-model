@@ -1,7 +1,7 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-15 14:38:12
- * @LastEditTime: 2022-03-15 15:32:35
+ * @LastEditTime: 2022-03-15 19:30:28
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\README.md
@@ -46,10 +46,10 @@
 - [x] track 依赖收集
 - [x] trigger 触发依赖
 - [ ] 支持 isReactive
-- [ ] 支持嵌套 reactive
+- [x] 支持嵌套 reactive
 - [ ] 支持 toRaw
-- [ ] 支持 effect.scheduler
-- [ ] 支持 effect.stop
+- [x] 支持 effect.scheduler
+- [x] 支持 effect.stop
 - [ ] 支持 isReadonly
 - [ ] 支持 isProxy
 - [ ] 支持 shallowReadonly
