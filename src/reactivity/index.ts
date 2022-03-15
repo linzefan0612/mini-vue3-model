@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
- * @Date: 2022-03-14 15:31:42
- * @LastEditTime: 2022-03-14 21:01:16
+ * @Date: 2022-03-15 13:08:22
+ * @LastEditTime: 2022-03-15 13:20:51
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\index.ts
@@ -12,15 +12,15 @@ import { track, trigger } from "./effect";
 
 export function reactive(raw) {
   return new Proxy(raw, {
-    get(target, key, receiver) {
-      // 先设置，再收集依赖
-      const res = Reflect.get(target, key, receiver);
+    get(target, key) {
+      const res = Reflect.get(target, key);
+      // 收集依赖
       track(target, key);
       return res;
     },
-    set(target, key, value, receiver) {
-      // 先更新，再触发依赖
-      const res = Reflect.set(target, key, value, receiver);
+    set(target, key, value) {
+      const res = Reflect.set(target, key, value);
+      // 触发依赖
       trigger(target, key);
       return res;
     },

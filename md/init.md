@@ -1,9 +1,9 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-14 15:29:23
- * @LastEditTime: 2022-03-14 15:42:51
+ * @LastEditTime: 2022-03-15 14:46:27
  * @LastEditors: Lin zefan
- * @Description:
+ * @Description: 初始化项目、配置test
  * @FilePath: \mini-vue3\md\init.md
  *
 -->
