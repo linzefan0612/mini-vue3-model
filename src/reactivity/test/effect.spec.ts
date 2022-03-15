@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-14 15:46:54
- * @LastEditTime: 2022-03-15 15:39:24
+ * @LastEditTime: 2022-03-15 17:11:07
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\test\effect.spec.ts
@@ -45,5 +45,35 @@ describe("effect", () => {
     expect(foo).toBe(12);
     // 是否返回了effect的return数据
     expect(r).toBe("return-effect");
+  });
+
+  // 实现scheduler
+  it("scheduler", () => {
+    let dummy;
+    let run: any;
+    const scheduler = jest.fn(() => {
+      run = runner;
+    });
+    const obj = reactive({ foo: 1 });
+    const runner = effect(
+      () => {
+        dummy = obj.foo;
+      },
+      { scheduler }
+    );
+    expect(scheduler).not.toHaveBeenCalled();
+
+    expect(dummy).toBe(1);
+    // should be called on first trigger
+    obj.foo++;
+    // 验证了scheduler被调用了一次
+    expect(scheduler).toHaveBeenCalledTimes(1);
+    // 有scheduler，优先调用了scheduler，不会走fn
+    // should not run yet
+    expect(dummy).toBe(1);
+    // manually run
+    run();
+    // should have run
+    expect(dummy).toBe(2);
   });
 });

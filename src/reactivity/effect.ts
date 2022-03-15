@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:11:07
- * @LastEditTime: 2022-03-15 15:31:34
+ * @LastEditTime: 2022-03-15 16:25:00
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\effect.ts
@@ -10,8 +10,10 @@
 
 let activeEffect;
 class Effect {
+  // 声明私有_fn变量
   private _fn: any;
-  constructor(fn) {
+  // public scheduler 声明了一个公共的scheduler
+  constructor(fn, public scheduler?) {
     this._fn = fn;
   }
 
@@ -49,13 +51,18 @@ export function trigger(target, key) {
   let depMap = targetMap.get(target);
   let dep = depMap.get(key);
   for (const effect of dep) {
+    if (effect.scheduler) {
+      effect.scheduler();
+      return;
+    }
     effect.run();
   }
 }
 
 // 执行依赖
-export function effect(fn) {
-  const _effect = new Effect(fn);
+export function effect(fn, options: any = {}) {
+  const { scheduler } = options;
+  const _effect = new Effect(fn, scheduler);
   _effect.run();
   // 暴露effect，手动绑定this指向，否则外部的this就指向错误了
   return _effect.run.bind(_effect);
