@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:11:07
- * @LastEditTime: 2022-03-15 14:24:57
+ * @LastEditTime: 2022-03-15 15:31:34
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\effect.ts
@@ -18,7 +18,8 @@ class Effect {
   // 运行
   run() {
     activeEffect = this;
-    this._fn();
+    // 暴露调用return的值
+    return this._fn();
   }
 }
 
@@ -56,4 +57,6 @@ export function trigger(target, key) {
 export function effect(fn) {
   const _effect = new Effect(fn);
   _effect.run();
+  // 暴露effect，手动绑定this指向，否则外部的this就指向错误了
+  return _effect.run.bind(_effect);
 }

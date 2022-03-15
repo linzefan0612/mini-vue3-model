@@ -1,7 +1,7 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-15 14:38:12
- * @LastEditTime: 2022-03-15 14:43:00
+ * @LastEditTime: 2022-03-15 15:32:35
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\README.md
@@ -43,8 +43,8 @@
 - [ ] ref 的实现
 - [ ] readonly 的实现
 - [ ] computed 的实现
-- [ ] track 依赖收集
-- [ ] trigger 触发依赖
+- [x] track 依赖收集
+- [x] trigger 触发依赖
 - [ ] 支持 isReactive
 - [ ] 支持嵌套 reactive
 - [ ] 支持 toRaw
