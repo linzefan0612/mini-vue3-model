@@ -1,21 +1,19 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-15 14:38:12
- * @LastEditTime: 2022-03-15 19:30:28
+ * @LastEditTime: 2022-03-15 22:40:10
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\README.md
  *
 -->
-
-# Why
-
-剖析 vue3 源码中最核心的逻辑。
+<!-- [CN](README.md) / [EN](README_EN.md) -->
 
 # How
 
-根据功能模块，按模块一点一点拆分，实现。<br>
-包括单元测试
+基于 vue3 源码实现一个 TDD mini 版的 vue<br>
+参考项目~ [mini-vue](https://github.com/cuixiaorui/mini-vue) <br>
+[实现过程记录](https://juejin.cn/column/6975739941984665630)
 
 ## Tasking
 
