@@ -1,16 +1,23 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-16 18:30:25
- * @LastEditTime: 2022-03-16 18:46:20
+ * @LastEditTime: 2022-03-16 19:26:36
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\baseHandlers.ts
  *
  */
+import { ReactiveEnum } from ".";
 import { track, trigger } from "./effect";
 
 function createdGetter(isReadonly = false) {
   return function (target, key, receiver) {
+    if (key === ReactiveEnum.IS_REACTIVE) {
+      return !isReadonly;
+    }
+    if (key === ReactiveEnum.IS_READONLY) {
+      return isReadonly;
+    }
     const res = Reflect.get(target, key, receiver);
     !isReadonly && track(target, key);
     return res;

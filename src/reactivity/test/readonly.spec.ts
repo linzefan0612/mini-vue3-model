@@ -1,9 +1,9 @@
-import { readonly } from "..";
+import { isReactive, isReadonly, reactive, readonly } from "..";
 
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-16 18:03:54
- * @LastEditTime: 2022-03-16 18:13:38
+ * @LastEditTime: 2022-03-16 19:26:56
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\test\readonly.spec.ts
@@ -17,8 +17,14 @@ describe("readonly", () => {
    */
   it("happy path", () => {
     const original = { foo: 1, bar: { baz: 2 } };
+    const state = reactive({
+      foo: 1,
+    });
     const wrapped = readonly(original);
     expect(wrapped).not.toBe(original);
+    expect(isReactive(state)).toBe(true);
+    expect(isReadonly(wrapped)).toBe(true);
+    expect(isReadonly(original)).toBe(false);
     expect(wrapped.foo).toBe(1);
   });
 
