@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:11:07
- * @LastEditTime: 2022-03-15 19:33:59
+ * @LastEditTime: 2022-03-16 17:28:07
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\effect.ts
@@ -10,64 +10,68 @@
 
 import { extend } from "../shared";
 
+// 当前活跃的effect实例
 let activeEffect;
 class Effect {
-  // 所有Effect
-  deps = [];
-  active = true;
-  onStop?: () => void;
   private _fn: any;
-  // public scheduler?: Function | undefined;
-  constructor(fn, public scheduler?: Function | undefined) {
+  scheduler?: Function | undefined;
+  stopFlag = true;
+  onStop?: () => void;
+  // 收集所有的dep
+  depMap = [];
+  constructor(fn) {
     this._fn = fn;
   }
 
-  // 运行
+  // 执行effect接收的fn
   run() {
     activeEffect = this;
-    // 暴露调用return的值
+    // return 执行结果
     return this._fn();
   }
 
-  // 清除当前依赖
+  /** 清除当前effect
+   * 1. 把所有的dep存起来，再从dep中清除当前的effect
+   * 2. 把当前effect从对应的dep中删除，触发依赖的时候就遍历不到该数据
+   */
   stop() {
-    if (this.active) {
+    this.onStop && this.onStop();
+    // 避免多次调用
+    if (this.stopFlag) {
       cleanEffect(this);
-      this.onStop && this.onStop();
-      this.active = false;
     }
   }
 }
 
 function cleanEffect(effect) {
-  effect.deps.forEach((dep: any) => {
-    // 清除当前依赖
-    dep.delete(effect);
+  effect.depMap.forEach((effects: any) => {
+    effects.delete(effect);
   });
+  effect.stopFlag = false;
+}
+
+export function stop(runner) {
+  runner.effect.stop();
 }
 
 // 收集依赖
-const targetMap = new Map(); // 存储所有依赖
+const targetMap = new Map(); // 所有的依赖，触发依赖的时候会从这里面取
 export function track(target, key) {
-  // 根据对象获取对应targetMap
   let depMap = targetMap.get(target);
-  // 初始化的时候是空的，要手动new一个空的进去
   if (!depMap) {
     depMap = new Map();
     targetMap.set(target, depMap);
   }
-  // 根据对应depMap获取对应的dep，并且添加当前实例
   let dep = depMap.get(key);
-  // 初始化的时候是空的，要手动new一个空的进去
   if (!dep) {
     dep = new Set();
     depMap.set(key, dep);
   }
-  if (!activeEffect) return;
   dep.add(activeEffect);
-  // 保存当前dep实例
-  activeEffect.deps.push(dep);
+  // 收集当前的dep
+  activeEffect.depMap.push(dep);
 }
+
 // 触发依赖
 export function trigger(target, key) {
   let depMap = targetMap.get(target);
@@ -81,21 +85,17 @@ export function trigger(target, key) {
   }
 }
 
-// 清除依赖
-export function stop(runner) {
-  runner.effect.stop();
-}
-
-// 执行依赖
-export function effect(fn, options: any = {}) {
-  const { scheduler, onStop } = options;
-  const _effect = new Effect(fn, scheduler);
+export function effect(fn, option: any = {}) {
+  const _effect = new Effect(fn);
+  // 初始化执行
   _effect.run();
-  // 将options对象都添加到_effect实例
-  extend(_effect, options);
-  // 暴露effect，手动绑定this指向，否则外部的this就指向错误了
+  
+  // 添加所有option属性
+  extend(_effect, option);
+
+  // 实现runner
   const runner: any = _effect.run.bind(_effect);
-  // 把当前effect存起来
+  // 把当前effect实例加到runner
   runner.effect = _effect;
   return runner;
 }

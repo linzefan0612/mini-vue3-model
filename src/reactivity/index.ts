@@ -1,28 +1,23 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:08:22
- * @LastEditTime: 2022-03-15 13:20:51
+ * @LastEditTime: 2022-03-16 18:50:48
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\index.ts
  *
  */
 
-import { track, trigger } from "./effect";
+import { mutableHandles, readonlyHandles } from "./baseHandlers";
 
 export function reactive(raw) {
-  return new Proxy(raw, {
-    get(target, key) {
-      const res = Reflect.get(target, key);
-      // 收集依赖
-      track(target, key);
-      return res;
-    },
-    set(target, key, value) {
-      const res = Reflect.set(target, key, value);
-      // 触发依赖
-      trigger(target, key);
-      return res;
-    },
-  });
+  return createdBaseHandler(raw, mutableHandles);
+}
+
+export function readonly(raw) {
+  return createdBaseHandler(raw, readonlyHandles);
+}
+
+function createdBaseHandler(raw, baseHandler) {
+  return new Proxy(raw, baseHandler);
 }
