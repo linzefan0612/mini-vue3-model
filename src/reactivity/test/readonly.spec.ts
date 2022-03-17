@@ -3,7 +3,7 @@ import { isReactive, isReadonly, reactive, readonly } from "..";
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-16 18:03:54
- * @LastEditTime: 2022-03-16 19:26:56
+ * @LastEditTime: 2022-03-17 11:12:06
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\test\readonly.spec.ts
@@ -12,8 +12,8 @@ import { isReactive, isReadonly, reactive, readonly } from "..";
 
 describe("readonly", () => {
   /** 检测readonly
-   * 1. readonly包装后的对象不等于初始对象
-   * 2. 可以正常拿到Proxy set的值
+   * 1. 是否为只读
+   * 2. 检测是否为reactive、readonly对象
    */
   it("happy path", () => {
     const original = { foo: 1, bar: { baz: 2 } };
@@ -21,11 +21,12 @@ describe("readonly", () => {
       foo: 1,
     });
     const wrapped = readonly(original);
+    wrapped.foo++;
+    expect(wrapped.foo).toBe(1);
     expect(wrapped).not.toBe(original);
     expect(isReactive(state)).toBe(true);
     expect(isReadonly(wrapped)).toBe(true);
     expect(isReadonly(original)).toBe(false);
-    expect(wrapped.foo).toBe(1);
   });
 
   /** 检测readonly内部调用set

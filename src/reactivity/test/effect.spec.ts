@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-14 15:46:54
- * @LastEditTime: 2022-03-16 17:15:14
+ * @LastEditTime: 2022-03-17 15:42:56
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\test\effect.spec.ts
@@ -98,14 +98,24 @@ describe("effect", () => {
     });
     obj.prop = 2;
     expect(dummy).toBe(2);
+
     // 使用了stop，删除了当前依赖
     stop(runner);
+
+    /** 看得见的思考
+     * 1. obj.prop = 3 只触发了set
+     * 2. obj.prop++ 等于 obj.prop = obj.prop + 1 ，会触发get把依赖收集，所以set的时候又有了。
+     * 3. 所以要在track的时候加个收集标识，判断是否触发stop，触发就不应该track。
+     */
     obj.prop = 3;
+    expect(dummy).toBe(2);
+
+    obj.prop++;
     expect(dummy).toBe(2);
 
     // stopped effect should still be manually callable
     runner();
-    expect(dummy).toBe(3);
+    expect(dummy).toBe(4);
   });
 
   /** 实现effect的stop回调通知

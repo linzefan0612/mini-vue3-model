@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:11:07
- * @LastEditTime: 2022-03-16 17:28:07
+ * @LastEditTime: 2022-03-17 15:41:57
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\effect.ts
@@ -12,22 +12,39 @@ import { extend } from "../shared";
 
 // 当前活跃的effect实例
 let activeEffect;
+// 判断是否需要收集
+let shouldTrack;
 class Effect {
   private _fn: any;
   scheduler?: Function | undefined;
-  stopFlag = true;
+  stopFlag = false;
   onStop?: () => void;
   // 收集所有的dep
   depMap = [];
+
   constructor(fn) {
     this._fn = fn;
   }
 
   // 执行effect接收的fn
   run() {
+    // 如果执行了stop，不会继续进行收集。
+    if (this.stopFlag) {
+      return this._fn();
+    }
+    // 保存当前实例，给track收集
     activeEffect = this;
-    // return 执行结果
-    return this._fn();
+    // 初始化收集状态
+    shouldTrack = true;
+    const result = this._fn();
+    /** 看得见的思考
+     * 1. fn调用(track)后，重置收集状态
+     * 2. 避免下一轮fn(track的时候)，如果shouldTrack为true，还会被收集进去
+     * 3. track内部判断了shouldTrack，所以要在track后重置收集状态
+     */
+
+    shouldTrack = false;
+    return result;
   }
 
   /** 清除当前effect
@@ -37,8 +54,9 @@ class Effect {
   stop() {
     this.onStop && this.onStop();
     // 避免多次调用
-    if (this.stopFlag) {
+    if (!this.stopFlag) {
       cleanEffect(this);
+      this.stopFlag = true;
     }
   }
 }
@@ -47,16 +65,21 @@ function cleanEffect(effect) {
   effect.depMap.forEach((effects: any) => {
     effects.delete(effect);
   });
-  effect.stopFlag = false;
+  effect.depMap.length = 0;
 }
 
 export function stop(runner) {
   runner.effect.stop();
 }
 
+function isTracking() {
+  // shouldTrack为true并且当前实例不为undefined，就会进行依赖收集
+  return shouldTrack && activeEffect !== undefined;
+}
 // 收集依赖
 const targetMap = new Map(); // 所有的依赖，触发依赖的时候会从这里面取
 export function track(target, key) {
+  if (!isTracking()) return;
   let depMap = targetMap.get(target);
   if (!depMap) {
     depMap = new Map();
@@ -67,7 +90,8 @@ export function track(target, key) {
     dep = new Set();
     depMap.set(key, dep);
   }
-  dep.add(activeEffect);
+  // 收集当前不存在的实例
+  !dep.has(activeEffect) && dep.add(activeEffect);
   // 收集当前的dep
   activeEffect.depMap.push(dep);
 }
@@ -89,7 +113,7 @@ export function effect(fn, option: any = {}) {
   const _effect = new Effect(fn);
   // 初始化执行
   _effect.run();
-  
+
   // 添加所有option属性
   extend(_effect, option);
 
