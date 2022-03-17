@@ -1,17 +1,19 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-16 18:30:25
- * @LastEditTime: 2022-03-17 12:27:30
+ * @LastEditTime: 2022-03-17 16:49:53
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\baseHandlers.ts
  *
  */
-import { ReactiveEnum } from ".";
+import { reactive, ReactiveEnum, readonly } from ".";
+import { isObject } from "../shared";
 import { track, trigger } from "./effect";
 
 function createdGetter(isReadonly = false) {
   return function (target, key, receiver) {
+    const res = Reflect.get(target, key, receiver);
     // 判断是否为reactive
     if (key === ReactiveEnum.IS_REACTIVE) {
       return !isReadonly;
@@ -20,7 +22,11 @@ function createdGetter(isReadonly = false) {
     if (key === ReactiveEnum.IS_READONLY) {
       return isReadonly;
     }
-    const res = Reflect.get(target, key, receiver);
+    // 嵌套判断
+    if (isObject(res)) {
+      return isReadonly ? readonly(res) : reactive(res);
+    }
+
     // 如果是readonly，不会进行收集
     !isReadonly && track(target, key);
     return res;

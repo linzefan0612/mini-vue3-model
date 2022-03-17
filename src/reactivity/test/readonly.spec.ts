@@ -3,7 +3,7 @@ import { isReactive, isReadonly, reactive, readonly } from "..";
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-16 18:03:54
- * @LastEditTime: 2022-03-17 11:12:06
+ * @LastEditTime: 2022-03-17 16:06:35
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\test\readonly.spec.ts
@@ -19,12 +19,15 @@ describe("readonly", () => {
     const original = { foo: 1, bar: { baz: 2 } };
     const state = reactive({
       foo: 1,
+      bar: { baz: 2 },
     });
     const wrapped = readonly(original);
     wrapped.foo++;
     expect(wrapped.foo).toBe(1);
     expect(wrapped).not.toBe(original);
+    // 检测是否为reactive对象
     expect(isReactive(state)).toBe(true);
+    // 检测是否为readonly对象
     expect(isReadonly(wrapped)).toBe(true);
     expect(isReadonly(original)).toBe(false);
   });
