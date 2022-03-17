@@ -1,17 +1,17 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-16 18:30:25
- * @LastEditTime: 2022-03-17 16:49:53
+ * @LastEditTime: 2022-03-17 17:44:46
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\baseHandlers.ts
  *
  */
 import { reactive, ReactiveEnum, readonly } from ".";
-import { isObject } from "../shared";
+import { extend, isObject } from "../shared";
 import { track, trigger } from "./effect";
 
-function createdGetter(isReadonly = false) {
+function createdGetter(isReadonly = false, shallow = false) {
   return function (target, key, receiver) {
     const res = Reflect.get(target, key, receiver);
     // 判断是否为reactive
@@ -23,12 +23,13 @@ function createdGetter(isReadonly = false) {
       return isReadonly;
     }
     // 嵌套判断
-    if (isObject(res)) {
+    if (isObject(res) && !shallow) {
       return isReadonly ? readonly(res) : reactive(res);
     }
 
     // 如果是readonly，不会进行收集
     !isReadonly && track(target, key);
+
     return res;
   };
 }
@@ -45,14 +46,13 @@ function createdSetter() {
 const get = createdGetter();
 const set = createdSetter();
 const readonlyGet = createdGetter(true);
+const shallowReadonlyGet = createdGetter(true, true);
 
-// 可变动的
 export const mutableHandles = {
   get,
   set,
 };
 
-// 只读的
 export const readonlyHandles = {
   get: readonlyGet,
   set(target, key, value, receiver) {
@@ -61,3 +61,7 @@ export const readonlyHandles = {
     return true;
   },
 };
+
+export const shallowReadonlyHandles = extend({}, readonlyHandles, {
+  get: shallowReadonlyGet,
+});
