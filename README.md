@@ -1,7 +1,7 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-15 14:38:12
- * @LastEditTime: 2022-03-17 17:50:38
+ * @LastEditTime: 2022-03-17 17:53:34
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\README.md
@@ -51,7 +51,7 @@
 - [x] 支持 effect.scheduler
 - [x] 支持 effect.stop
 - [x] 支持 isReadonly
-- [ ] 支持 isProxy
+- [x] 支持 isProxy
 - [x] 支持 shallowReadonly
 - [ ] 支持 proxyRefs
 
