@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:11:07
- * @LastEditTime: 2022-03-17 15:41:57
+ * @LastEditTime: 2022-03-17 18:42:45
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\effect.ts
@@ -72,7 +72,7 @@ export function stop(runner) {
   runner.effect.stop();
 }
 
-function isTracking() {
+export function isTracking() {
   // shouldTrack为true并且当前实例不为undefined，就会进行依赖收集
   return shouldTrack && activeEffect !== undefined;
 }
@@ -90,6 +90,9 @@ export function track(target, key) {
     dep = new Set();
     depMap.set(key, dep);
   }
+  trackEffect(dep);
+}
+export function trackEffect(dep) {
   // 收集当前不存在的实例
   !dep.has(activeEffect) && dep.add(activeEffect);
   // 收集当前的dep
@@ -100,6 +103,9 @@ export function track(target, key) {
 export function trigger(target, key) {
   let depMap = targetMap.get(target);
   let dep = depMap.get(key);
+  triggerEffect(dep);
+}
+export function triggerEffect(dep) {
   for (const effect of dep) {
     if (effect.scheduler) {
       effect.scheduler();
