@@ -1,7 +1,7 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-15 14:38:12
- * @LastEditTime: 2022-03-17 17:53:34
+ * @LastEditTime: 2022-03-17 20:11:20
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\README.md
@@ -40,7 +40,7 @@
 目标是用自己的 reactivity 支持现有的 demo 运行
 
 - [x] reactive 的实现
-- [ ] ref 的实现
+- [x] ref 的实现
 - [x] readonly 的实现
 - [ ] computed 的实现
 - [x] track 依赖收集

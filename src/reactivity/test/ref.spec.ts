@@ -1,5 +1,6 @@
+import { reactive } from "..";
 import { effect } from "../effect";
-import { ref } from "../ref";
+import { isRef, ref, unRef } from "../ref";
 
 describe("ref", () => {
   /** 看得见的思考
@@ -62,7 +63,11 @@ describe("ref", () => {
     expect(user.age.value).toBe(10);
   });
 
-  it.skip("isRef", () => {
+  /** 看得见的思考
+   * 1. 给ref实例一个固定标识
+   * 2. 如果能取到该标识证明就是ref对象
+   */
+  it("isRef", () => {
     const a = ref(1);
     const user = reactive({
       age: 1,
@@ -72,7 +77,11 @@ describe("ref", () => {
     expect(isRef(user)).toBe(false);
   });
 
-  it.skip("unRef", () => {
+  /** 看得见的思考
+   * 1. 可以利用isRef判断
+   * 2. 如果是true，则返回ref.value，否则直接返回原值
+   */
+  it("unRef", () => {
     const a = ref(1);
     expect(unRef(a)).toBe(1);
     expect(unRef(1)).toBe(1);

@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:11:07
- * @LastEditTime: 2022-03-17 18:42:45
+ * @LastEditTime: 2022-03-18 15:12:50
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\effect.ts
@@ -90,6 +90,7 @@ export function track(target, key) {
     dep = new Set();
     depMap.set(key, dep);
   }
+  // 提取了收集函数
   trackEffect(dep);
 }
 export function trackEffect(dep) {

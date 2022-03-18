@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-17 18:23:36
- * @LastEditTime: 2022-03-17 19:04:00
+ * @LastEditTime: 2022-03-18 15:25:08
  * @LastEditors: Lin zefan
  * @Description: ref
  * @FilePath: \mini-vue3\src\reactivity\ref.ts
@@ -16,6 +16,7 @@ class RefIpl {
   private _value: any;
   dep: Set<unknown>;
   private _rawValue: any;
+  __v_isRef = true;
   constructor(value) {
     this._value = convert(value);
     this._rawValue = value;
@@ -46,4 +47,12 @@ function convert(value) {
 
 export function ref(value) {
   return new RefIpl(value);
+}
+
+export function isRef(ref) {
+  return !!ref.__v_isRef;
+}
+
+export function unRef(ref) {
+  return isRef(ref) ? ref.value : ref;
 }
