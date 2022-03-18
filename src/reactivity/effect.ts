@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:11:07
- * @LastEditTime: 2022-03-18 15:12:50
+ * @LastEditTime: 2022-03-18 18:20:17
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\effect.ts
@@ -14,7 +14,7 @@ import { extend } from "../shared";
 let activeEffect;
 // 判断是否需要收集
 let shouldTrack;
-class Effect {
+export class Effect {
   private _fn: any;
   scheduler?: Function | undefined;
   stopFlag = false;
@@ -22,8 +22,9 @@ class Effect {
   // 收集所有的dep
   depMap = [];
 
-  constructor(fn) {
+  constructor(fn, scheduler) {
     this._fn = fn;
+    this.scheduler = scheduler;
   }
 
   // 执行effect接收的fn

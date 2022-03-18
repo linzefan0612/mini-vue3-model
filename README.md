@@ -1,7 +1,7 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-15 14:38:12
- * @LastEditTime: 2022-03-18 15:28:48
+ * @LastEditTime: 2022-03-18 16:09:30
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\README.md
@@ -42,7 +42,7 @@
 - [x] reactive 的实现
 - [x] ref 的实现
 - [x] readonly 的实现
-- [ ] computed 的实现
+- [x] computed 的实现
 - [x] track 依赖收集
 - [x] trigger 触发依赖
 - [x] 支持 isReactive
@@ -53,7 +53,7 @@
 - [x] 支持 isReadonly
 - [x] 支持 isProxy
 - [x] 支持 shallowReadonly
-- [ ] 支持 proxyRefs
+- [x] 支持 proxyRefs
 
 ### compiler-core
 
