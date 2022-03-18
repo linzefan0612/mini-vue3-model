@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-17 18:23:36
- * @LastEditTime: 2022-03-18 15:25:08
+ * @LastEditTime: 2022-03-18 16:08:07
  * @LastEditors: Lin zefan
  * @Description: ref
  * @FilePath: \mini-vue3\src\reactivity\ref.ts
@@ -55,4 +55,23 @@ export function isRef(ref) {
 
 export function unRef(ref) {
   return isRef(ref) ? ref.value : ref;
+}
+
+export function proxyRefs(objectWithRef) {
+  return new Proxy(objectWithRef, {
+    get(target, key) {
+      return unRef(Reflect.get(target, key));
+    },
+    set(target, key, value) {
+      /** 思考
+       * 1. 更新前是ref，更新后不是ref，那应该是把target[key].value进行替换
+       * 2. 两者都是ref的情况下，直接替换即可
+       */
+      if (isRef(target[key]) && !isRef(value)) {
+        return (target[key].value = value);
+      } else {
+        return Reflect.set(target, key, value);
+      }
+    },
+  });
 }

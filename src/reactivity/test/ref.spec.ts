@@ -1,6 +1,6 @@
 import { reactive } from "..";
 import { effect } from "../effect";
-import { isRef, ref, unRef } from "../ref";
+import { isRef, proxyRefs, ref, unRef } from "../ref";
 
 describe("ref", () => {
   /** 看得见的思考
@@ -44,7 +44,13 @@ describe("ref", () => {
     expect(dummy).toBe(2);
   });
 
-  it.skip("proxyRefs", () => {
+  /** 看得见的思考
+   * 1. get，获取的时候主要考虑是ref对象还是普通对象，可以借助unRef
+   * 2. set，更新要考虑是普通对象还是ref，要保持响应
+   *  2.1 如果普通对象，则更新.value的值
+   *  2.2 如果是ref，则直接替换即可
+   */
+  it("proxyRefs", () => {
     const user = {
       age: ref(10),
       name: "xiaohong",
