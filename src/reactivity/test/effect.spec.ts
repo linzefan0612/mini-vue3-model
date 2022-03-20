@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-14 15:46:54
- * @LastEditTime: 2022-03-18 10:20:27
+ * @LastEditTime: 2022-03-20 11:52:04
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\test\effect.spec.ts
@@ -19,15 +19,23 @@ describe("effect", () => {
   it("effect", () => {
     const user = reactive({
       age: 10,
+      obj: {
+        num: 0,
+      },
     });
     let nextAge;
+    let nextNum;
     effect(() => {
       nextAge = user.age + 1;
+      nextNum = user.obj.num;
     });
     expect(nextAge).toBe(11);
+    expect(nextNum).toBe(0);
     // update
     user.age++;
+    user.obj.num++;
     expect(nextAge).toBe(12);
+    expect(nextNum).toBe(1);
   });
 
   /** runner

@@ -1,32 +1,28 @@
-import { isReadonly, readonly, shallowReadonly } from "..";
+import { isReactive, shallowReactive } from "..";
+import { effect } from "../effect";
 
-describe("shallowReadonly", () => {
-  /** 检测readonly
-   * 1. 是否为只读
-   * 2. 检测是否为reactive、readonly对象
+describe("shallowReactive", () => {
+  /** shallowReactive
+   * 1. 浅层做reactive代理，所有首层引用是双向绑定的
+   * 2. 不做深度reactive转换
+   * 3. 深层的对象操作还是可以,但不是双向绑定
    */
   it("happy path", () => {
-    const state = shallowReadonly({
+    const state = shallowReactive({
       foo: 1,
       bar: { baz: 2 },
     });
-
-    expect(isReadonly(state.bar)).toBe(false);
-    expect(isReadonly(state)).toBe(true);
-  });
-
-  /** 检测readonly内部调用set
-   * 1. 调用Proxy set会输出一个console.warn
-   * 2. 校验是否成功输出console.warn
-   */
-  it("warn then call set", () => {
-    console.warn = jest.fn();
-
-    const u = readonly({
-      age: 10,
+    let num = 0;
+    let baz = 0;
+    effect(() => {
+      num = state.foo;
+      baz = state.bar.baz;
     });
-    u.age = 11;
-
-    expect(console.warn).toBeCalled();
+    expect(isReactive(state.bar)).toBe(false);
+    expect(baz).toBe(2);
+    state.foo += 2;
+    expect(num).toBe(3);
+    state.bar.baz++;
+    expect(baz).toBe(2);
   });
 });

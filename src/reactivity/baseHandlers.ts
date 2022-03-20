@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-16 18:30:25
- * @LastEditTime: 2022-03-17 17:44:46
+ * @LastEditTime: 2022-03-20 12:09:02
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\baseHandlers.ts
@@ -22,7 +22,11 @@ function createdGetter(isReadonly = false, shallow = false) {
     if (key === ReactiveEnum.IS_READONLY) {
       return isReadonly;
     }
-    // 嵌套判断
+    /** 嵌套转换判断, 思考
+     * 1. 如果shallow为true，那就不进行深度转换
+     * 2. 没有被深度转换的,是一个普通对象,不会二次转换
+     * 3. 即没有readonly深度拦截, 没有reactive的深度对象响应(没有被收集)
+     */
     if (isObject(res) && !shallow) {
       return isReadonly ? readonly(res) : reactive(res);
     }
@@ -46,6 +50,7 @@ function createdSetter() {
 const get = createdGetter();
 const set = createdSetter();
 const readonlyGet = createdGetter(true);
+const shallowReactiveGet = createdGetter(false, true);
 const shallowReadonlyGet = createdGetter(true, true);
 
 export const mutableHandles = {
@@ -64,4 +69,8 @@ export const readonlyHandles = {
 
 export const shallowReadonlyHandles = extend({}, readonlyHandles, {
   get: shallowReadonlyGet,
+});
+
+export const shallowReactiveHandles = extend({}, mutableHandles, {
+  get: shallowReactiveGet,
 });

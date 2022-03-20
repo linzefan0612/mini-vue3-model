@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:08:22
- * @LastEditTime: 2022-03-17 17:54:56
+ * @LastEditTime: 2022-03-20 11:07:51
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\index.ts
@@ -11,6 +11,7 @@ import {
   mutableHandles,
   readonlyHandles,
   shallowReadonlyHandles,
+  shallowReactiveHandles
 } from "./baseHandlers";
 
 export const enum ReactiveEnum {
@@ -26,12 +27,16 @@ export function reactive(raw) {
   return createdBaseHandler(raw, mutableHandles);
 }
 
-export function shallowReadonly(raw) {
-  return createdBaseHandler(raw, shallowReadonlyHandles);
-}
-
 export function readonly(raw) {
   return createdBaseHandler(raw, readonlyHandles);
+}
+
+export function shallowReactive(raw) {
+  return createdBaseHandler(raw, shallowReactiveHandles);
+}
+
+export function shallowReadonly(raw) {
+  return createdBaseHandler(raw, shallowReadonlyHandles);
 }
 
 export function isReadonly(raw) {

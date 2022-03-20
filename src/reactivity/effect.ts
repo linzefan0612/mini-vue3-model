@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:11:07
- * @LastEditTime: 2022-03-18 18:20:17
+ * @LastEditTime: 2022-03-20 11:30:44
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\effect.ts
@@ -22,7 +22,7 @@ export class Effect {
   // 收集所有的dep
   depMap = [];
 
-  constructor(fn, scheduler) {
+  constructor(fn, scheduler?) {
     this._fn = fn;
     this.scheduler = scheduler;
   }
