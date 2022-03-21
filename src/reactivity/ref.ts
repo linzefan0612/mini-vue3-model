@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-17 18:23:36
- * @LastEditTime: 2022-03-20 15:11:23
+ * @LastEditTime: 2022-03-21 23:28:20
  * @LastEditors: Lin zefan
  * @Description: ref
  * @FilePath: \mini-vue3\src\reactivity\ref.ts
@@ -14,6 +14,7 @@ import { isTracking, trackEffect, triggerEffect } from "./effect";
 class RefImpl {
   _dep: any;
   private _value: any;
+  // ref对象标识
   __v_isRef = true;
   constructor(value) {
     /**

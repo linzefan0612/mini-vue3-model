@@ -1,3 +1,13 @@
+/*
+ * @Author: Lin zefan
+ * @Date: 2022-03-21 21:46:14
+ * @LastEditTime: 2022-03-21 23:07:06
+ * @LastEditors: Lin zefan
+ * @Description: 
+ * @FilePath: \mini-vue3\example\helloWorld\main.js
+ * 
+ */
+
 import { createApp } from "../../lib/mini-vue.esm.js";
 import App from "./App.js";
 
