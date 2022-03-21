@@ -5,8 +5,8 @@ import { isRef, proxyRefs, ref, unRef } from "../ref";
 describe("ref", () => {
   /** 看得见的思考
    * 1. ref对象的值包在value
-   * 2. ref的数据也要收集，触发侦听
-   * 3. 重新赋值时判断值是否相等
+   * 2. ref的数据也要收集，触发侦听，做双向绑定
+   * 3. 做缓存，重新赋值时判断值是否相等
    */
   it("should be reactive", () => {
     const a = ref(1);
@@ -18,10 +18,17 @@ describe("ref", () => {
     });
     expect(calls).toBe(1);
     expect(dummy).toBe(1);
+    /** 思考
+     * 1. 依赖ref的数据发生变动，对应也要变动
+     * 2. ref要触发effect，才能侦听到数据变化
+     */
     a.value = 2;
     expect(calls).toBe(2);
     expect(dummy).toBe(2);
     // same value should not trigger
+    /** 思考
+     * 1. ref做缓存，要加个标识
+     */
     a.value = 2;
     expect(calls).toBe(2);
     expect(dummy).toBe(2);
@@ -29,7 +36,7 @@ describe("ref", () => {
 
   /** 看得见的思考
    * 1. ref支持基本类型和引用类型
-   * 2. ref可以深度侦听数据变化，所以内部得
+   * 2. ref可以深度侦听数据变化
    */
   it("should make nested properties reactive", () => {
     const a = ref({
@@ -42,6 +49,30 @@ describe("ref", () => {
     expect(dummy).toBe(1);
     a.value.count = 2;
     expect(dummy).toBe(2);
+  });
+
+  /** 看得见的思考
+   * 1. 给ref实例一个固定标识
+   * 2. 如果能取到该标识证明就是ref对象
+   */
+  it("isRef", () => {
+    const a = ref(1);
+    const user = reactive({
+      age: 1,
+    });
+    expect(isRef(a)).toBe(true);
+    expect(isRef(1)).toBe(false);
+    expect(isRef(user)).toBe(false);
+  });
+
+  /** 看得见的思考
+   * 1. 可以利用isRef判断
+   * 2. 如果是ref对象，则返回ref.value，否则直接返回原值
+   */
+  it("unRef", () => {
+    const a = ref(1);
+    expect(unRef(a)).toBe(1);
+    expect(unRef(1)).toBe(1);
   });
 
   /** 看得见的思考
@@ -67,29 +98,5 @@ describe("ref", () => {
     proxyUser.age = ref(10);
     expect(proxyUser.age).toBe(10);
     expect(user.age.value).toBe(10);
-  });
-
-  /** 看得见的思考
-   * 1. 给ref实例一个固定标识
-   * 2. 如果能取到该标识证明就是ref对象
-   */
-  it("isRef", () => {
-    const a = ref(1);
-    const user = reactive({
-      age: 1,
-    });
-    expect(isRef(a)).toBe(true);
-    expect(isRef(1)).toBe(false);
-    expect(isRef(user)).toBe(false);
-  });
-
-  /** 看得见的思考
-   * 1. 可以利用isRef判断
-   * 2. 如果是true，则返回ref.value，否则直接返回原值
-   */
-  it("unRef", () => {
-    const a = ref(1);
-    expect(unRef(a)).toBe(1);
-    expect(unRef(1)).toBe(1);
   });
 });

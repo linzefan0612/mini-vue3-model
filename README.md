@@ -1,7 +1,7 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-15 14:38:12
- * @LastEditTime: 2022-03-18 16:09:30
+ * @LastEditTime: 2022-03-20 12:10:22
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\README.md
@@ -53,6 +53,7 @@
 - [x] 支持 isReadonly
 - [x] 支持 isProxy
 - [x] 支持 shallowReadonly
+- [x] 支持 shallowReactive
 - [x] 支持 proxyRefs
 
 ### compiler-core

@@ -1,52 +1,55 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-17 18:23:36
- * @LastEditTime: 2022-03-18 16:08:07
+ * @LastEditTime: 2022-03-20 15:11:23
  * @LastEditors: Lin zefan
  * @Description: ref
  * @FilePath: \mini-vue3\src\reactivity\ref.ts
  *
  */
-
 import { reactive } from ".";
-import { hasChanged, isObject } from "../shared";
+import { isObject, hasChanged } from "../shared";
 import { isTracking, trackEffect, triggerEffect } from "./effect";
 
-class RefIpl {
+class RefImpl {
+  _dep: any;
   private _value: any;
-  dep: Set<unknown>;
-  private _rawValue: any;
   __v_isRef = true;
   constructor(value) {
+    /**
+     * 1. 需要判断value是基本类型还是引用类型
+     * 2. 引用类型需要用reactive包裹，做到深度侦听
+     */
     this._value = convert(value);
-    this._rawValue = value;
-    this.dep = new Set();
+    this._dep = new Set();
   }
 
   get value() {
-    trackRefValue(this);
-    // 如果是对象，用reactive包裹，否则直接返回
+    /** 思考
+     * 1. get要收集依赖
+     */
+    isTracking() && trackEffect(this._dep);
     return this._value;
   }
-  set value(newValue) {
-    // 判等，若相等不更新
-    if (hasChanged(this._rawValue, newValue)) return;
-    // 更新固定值
-    this._rawValue = newValue;
-    // 更新value
-    this._value = convert(newValue);
-    triggerEffect(this.dep);
+
+  set value(newVal) {
+    /** 思考
+     * 1. 先判断新老值，值不相等再做更新
+     * 2. 更新ref.value
+     * 3. 更新依赖的值
+     */
+    if (hasChanged(this._value, newVal)) return;
+    this._value = convert(newVal);
+    triggerEffect(this._dep);
   }
 }
-function trackRefValue(ref) {
-  isTracking() && trackEffect(ref.dep);
-}
+
 function convert(value) {
   return isObject(value) ? reactive(value) : value;
 }
 
-export function ref(value) {
-  return new RefIpl(value);
+export function ref(ref) {
+  return new RefImpl(ref);
 }
 
 export function isRef(ref) {
@@ -57,18 +60,20 @@ export function unRef(ref) {
   return isRef(ref) ? ref.value : ref;
 }
 
-export function proxyRefs(objectWithRef) {
-  return new Proxy(objectWithRef, {
+export function proxyRefs(ref) {
+  return new Proxy(ref, {
     get(target, key) {
+      // 需要判断target是ref对象还是其他，ref帮忙提取.value
       return unRef(Reflect.get(target, key));
     },
     set(target, key, value) {
       /** 思考
-       * 1. 更新前是ref，更新后不是ref，那应该是把target[key].value进行替换
-       * 2. 两者都是ref的情况下，直接替换即可
+       * 1. 新老值对比，如果老值是ref，新值不是，那应该是更新老值的.value
+       * 2. 如果新值是ref，直接替换即可
        */
       if (isRef(target[key]) && !isRef(value)) {
-        return (target[key].value = value);
+        target[key].value = value;
+        return target;
       } else {
         return Reflect.set(target, key, value);
       }
