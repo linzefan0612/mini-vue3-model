@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-22 15:29:16
- * @LastEditTime: 2022-03-22 15:30:41
+ * @LastEditTime: 2022-03-22 17:25:30
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\runtime-core\h.ts
@@ -15,4 +15,10 @@
  * @param {*} children 组件嵌套的子组件
  * @return {Element}
  */
-export function h(type, props?, children?) {}
+export function h(type, props?, children?) {
+  return {
+    type,
+    props,
+    children,
+  };
+}

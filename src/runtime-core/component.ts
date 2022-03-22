@@ -1,9 +1,9 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-03-21 23:02:02
+ * @LastEditTime: 2022-03-22 17:34:01
  * @LastEditors: Lin zefan
- * @Description:
+ * @Description: 处理组件类型
  * @FilePath: \mini-vue3\src\runtime-core\component.ts
  *
  */
@@ -20,7 +20,7 @@ export function processComponent(vnode, container) {
   //   updateComponent(vnode, container);
 }
 
-// -----------------创建流程-------------------
+// -----------------Component创建流程-------------------
 function mountComponent(vnode, container) {
   // 创建component实例
   const instance = createComponentInstance(vnode);
@@ -83,7 +83,7 @@ function handleSetupResult(instance, setupResult) {
 function finishComponentSetup(instance) {
   const component = instance.type;
   // 挂载实例的render函数，取当前组件实例声明得render
-  if (!instance.render && component.render) {
+  if (component.render) {
     instance.render = component.render;
   }
   // 而没有 component.render 咋办捏，其实可以通过编译器来自动生成一个 render 函数
@@ -97,5 +97,5 @@ function setupRenderEffect(instance, container) {
   patch(subTree, container);
 }
 
-// ---------------------更新流程----------------------
+// ---------------------Component更新流程----------------------
 function updateComponent(vnode, container) {}
