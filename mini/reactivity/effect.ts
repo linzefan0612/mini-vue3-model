@@ -1,14 +1,12 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:11:07
- * @LastEditTime: 2022-03-16 15:32:56
+ * @LastEditTime: 2022-03-22 16:17:05
  * @LastEditors: Lin zefan
  * @Description:
- * @FilePath: \mini-vue3\src\reactivity\effect copy.ts
+ * @FilePath: \mini-vue3\mini\reactivity\effect.ts
  *
  */
-
-import { extend } from "../shared";
 
 let activeEffect;
 class Effect {
@@ -92,7 +90,7 @@ export function effect(fn, options: any = {}) {
   const _effect = new Effect(fn, scheduler);
   _effect.run();
   // 将options对象都添加到_effect实例
-  extend(_effect, options);
+  Object.assign(_effect, options);
   // 暴露effect，手动绑定this指向，否则外部的this就指向错误了
   const runner: any = _effect.run.bind(_effect);
   // 把当前effect存起来
