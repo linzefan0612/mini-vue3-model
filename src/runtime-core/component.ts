@@ -1,13 +1,14 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-03-22 17:34:01
+ * @LastEditTime: 2022-03-23 22:43:09
  * @LastEditors: Lin zefan
  * @Description: 处理组件类型
  * @FilePath: \mini-vue3\src\runtime-core\component.ts
  *
  */
 
+import { PublicInstanceProxyHandlers } from "./componentPublicInstanceProxyHandlers";
 import { patch } from "./render";
 
 export function processComponent(vnode, container) {
@@ -22,21 +23,33 @@ export function processComponent(vnode, container) {
 
 // -----------------Component创建流程-------------------
 function mountComponent(vnode, container) {
-  // 创建component实例
+  // 初始化Component实例
   const instance = createComponentInstance(vnode);
-  // setup component
+  // 初始化setup函数return的数据
   setupComponent(instance, container);
+  /** 挂载render的this
+   * 1. 我们知道render里面可以使用this.xxx，例如setup return的数据、$el、$data等
+   * 2. 我们可以借助proxy来挂载我们的实例属性，让proxy代理
+   * 3. 最后render的时候，把this指向这个proxy，这样就可以通过 this.xx -> proxy.get(xx) 获取数据
+   */
+  createProxyInstance(instance);
   // setupRenderEffect
   setupRenderEffect(instance, container);
 }
 
 // 初始化Component结构
-function createComponentInstance(vnode) {
-  const component = {
-    vnode,
-    type: vnode.type,
+function createComponentInstance(initVNode) {
+  return {
+    vnode: initVNode,
+    type: initVNode.type,
+    proxy: null,
+    setupState: {},
   };
-  return component;
+}
+
+// 初始化组件代理
+function createProxyInstance(instance) {
+  instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
 }
 
 // 初始化setup数据
@@ -55,6 +68,7 @@ function setupStatefulComponent(instance, container) {
    * 3. 最后可以通过instance.type 获取根组件(rootComponent)
    */
   const component = instance.type;
+
   const { setup } = component;
   if (setup) {
     const setupResult = setup();
@@ -62,6 +76,11 @@ function setupStatefulComponent(instance, container) {
   }
 }
 
+export const componentPublicInstanceProxyHandlers = {
+  get(target, key) {
+    return target.setupState[key];
+  },
+};
 // 获取 setup() 的返回值并挂载实例
 function handleSetupResult(instance, setupResult) {
   /** 这里有setup返回值有两种情况
@@ -75,26 +94,32 @@ function handleSetupResult(instance, setupResult) {
     // 如果是函数，那么当作render处理TODO
   }
 
-  // 初始化render函数
   finishComponentSetup(instance);
 }
 
-// 初始化render函数
+// 挂载render到实例
 function finishComponentSetup(instance) {
   const component = instance.type;
   // 挂载实例的render函数，取当前组件实例声明得render
   if (component.render) {
     instance.render = component.render;
   }
-  // 而没有 component.render 咋办捏，其实可以通过编译器来自动生成一个 render 函数
+  // TODO而没有 component.render 咋办捏，其实可以通过编译器来自动生成一个 render 函数
   // 这里先不写
 }
 
 function setupRenderEffect(instance, container) {
-  // 通过render函数，获取render返回虚拟节点
-  const subTree = instance.render();
+  const { proxy, vnode } = instance;
+  // 通过render函数，获取render返回虚拟节点，并绑定render的this
+  const subTree = instance.render.call(proxy);
   // 最后通过patch的processElement，将subTree渲染到container(节点)上
   patch(subTree, container);
+  /** 挂载当前的dom元素到$el
+   * 1. 当遍历完所有Component组件后，会调用processElement
+   * 2. 在processElement中，会创建dom元素，把创建的dom元素挂载到传入的vnode里面
+   * 3. 当前的dom元素也就是processElement中创建的dom元素
+   */
+  vnode.el = subTree.$el;
 }
 
 // ---------------------Component更新流程----------------------

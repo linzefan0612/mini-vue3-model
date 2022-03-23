@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 21:46:14
- * @LastEditTime: 2022-03-22 17:27:11
+ * @LastEditTime: 2022-03-23 17:43:05
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\example\helloWorld\App.js
@@ -19,9 +19,10 @@ export default {
   },
 
   render() {
+    window.self = this;
     return h("div", { id: "father", class: ["a", "b"] }, [
-      h("h1", {}, "h1"),
-      h("h2", {}, "h2"),
+      h("h1", {}, "标题"),
+      h("h2", {}, this.ctx),
     ]);
   },
 };
