@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 21:46:14
- * @LastEditTime: 2022-03-23 17:43:05
+ * @LastEditTime: 2022-03-25 20:22:23
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\example\helloWorld\App.js
@@ -20,9 +20,19 @@ export default {
 
   render() {
     window.self = this;
-    return h("div", { id: "father", class: ["a", "b"] }, [
-      h("h1", {}, "标题"),
-      h("h2", {}, this.ctx),
-    ]);
+    return h(
+      "div",
+      {
+        id: "father",
+        class: ["a", "b"],
+        onClick() {
+          console.log("onClick");
+        },
+        onMousedown() {
+          console.log("onMousedown");
+        },
+      },
+      [h("h1", {}, "标题"), h("h2", {}, this.ctx)]
+    );
   },
 };
