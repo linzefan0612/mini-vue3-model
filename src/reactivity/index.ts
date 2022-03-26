@@ -1,17 +1,18 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:08:22
- * @LastEditTime: 2022-03-20 11:07:51
+ * @LastEditTime: 2022-03-26 10:20:19
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\index.ts
  *
  */
+import { isObject } from "../shared/index";
 import {
   mutableHandles,
   readonlyHandles,
   shallowReadonlyHandles,
-  shallowReactiveHandles
+  shallowReactiveHandles,
 } from "./baseHandlers";
 
 export const enum ReactiveEnum {
@@ -20,6 +21,9 @@ export const enum ReactiveEnum {
 }
 
 function createdBaseHandler(raw, baseHandler) {
+  if (!isObject(raw)) {
+    console.warn(`Proxy的代理必须是一个对象，${raw}不是一个对象`);
+  }
   return new Proxy(raw, baseHandler);
 }
 

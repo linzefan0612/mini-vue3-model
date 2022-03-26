@@ -1,13 +1,15 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-03-23 22:43:09
+ * @LastEditTime: 2022-03-26 10:54:57
  * @LastEditors: Lin zefan
  * @Description: 处理组件类型
  * @FilePath: \mini-vue3\src\runtime-core\component.ts
  *
  */
 
+import { shallowReadonly } from "../reactivity/index";
+import { initProps } from "./componentProps";
 import { PublicInstanceProxyHandlers } from "./componentPublicInstanceProxyHandlers";
 import { patch } from "./render";
 
@@ -44,6 +46,7 @@ function createComponentInstance(initVNode) {
     type: initVNode.type,
     proxy: null,
     setupState: {},
+    props: {},
   };
 }
 
@@ -54,7 +57,8 @@ function createProxyInstance(instance) {
 
 // 初始化setup数据
 function setupComponent(instance, container) {
-  // TODO initProps() - 初始化props
+  // 初始化props
+  initProps(instance);
   // TODO initSlots() - 初始化slots
   // 初始化setup函数返回值
   setupStatefulComponent(instance, container);
@@ -71,16 +75,15 @@ function setupStatefulComponent(instance, container) {
 
   const { setup } = component;
   if (setup) {
-    const setupResult = setup();
+    /** 
+     * 1. setup接收props
+     * 2. 执行setup
+     */
+    const setupResult = setup(shallowReadonly(instance.props));
     handleSetupResult(instance, setupResult);
   }
 }
 
-export const componentPublicInstanceProxyHandlers = {
-  get(target, key) {
-    return target.setupState[key];
-  },
-};
 // 获取 setup() 的返回值并挂载实例
 function handleSetupResult(instance, setupResult) {
   /** 这里有setup返回值有两种情况
