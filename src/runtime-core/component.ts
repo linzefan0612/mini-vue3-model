@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-03-26 10:54:57
+ * @LastEditTime: 2022-03-26 12:57:43
  * @LastEditors: Lin zefan
  * @Description: 处理组件类型
  * @FilePath: \mini-vue3\src\runtime-core\component.ts
@@ -9,6 +9,7 @@
  */
 
 import { shallowReadonly } from "../reactivity/index";
+import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 import { PublicInstanceProxyHandlers } from "./componentPublicInstanceProxyHandlers";
 import { patch } from "./render";
@@ -41,13 +42,21 @@ function mountComponent(vnode, container) {
 
 // 初始化Component结构
 function createComponentInstance(initVNode) {
-  return {
+  const component = {
     vnode: initVNode,
     type: initVNode.type,
     proxy: null,
     setupState: {},
     props: {},
+    emit: () => {},
   };
+
+  /** 注册emit
+   * 1. 通过bind把当前实例给到emit函数
+   */
+  component.emit = emit.bind(null, component) as any;
+
+  return component;
 }
 
 // 初始化组件代理
@@ -75,11 +84,13 @@ function setupStatefulComponent(instance, container) {
 
   const { setup } = component;
   if (setup) {
-    /** 
-     * 1. setup接收props
+    /**
+     * 1. setup接收props、context
      * 2. 执行setup
      */
-    const setupResult = setup(shallowReadonly(instance.props));
+    const setupResult = setup(shallowReadonly(instance.props), {
+      emit: instance.emit,
+    });
     handleSetupResult(instance, setupResult);
   }
 }
