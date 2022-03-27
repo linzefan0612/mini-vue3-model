@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-03-26 12:57:43
+ * @LastEditTime: 2022-03-27 11:37:12
  * @LastEditors: Lin zefan
  * @Description: 处理组件类型
  * @FilePath: \mini-vue3\src\runtime-core\component.ts
@@ -11,7 +11,9 @@
 import { shallowReadonly } from "../reactivity/index";
 import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
+
 import { PublicInstanceProxyHandlers } from "./componentPublicInstanceProxyHandlers";
+import { initSlots } from "./componentSlot";
 import { patch } from "./render";
 
 export function processComponent(vnode, container) {
@@ -48,6 +50,7 @@ function createComponentInstance(initVNode) {
     proxy: null,
     setupState: {},
     props: {},
+    slots: {},
     emit: () => {},
   };
 
@@ -67,8 +70,9 @@ function createProxyInstance(instance) {
 // 初始化setup数据
 function setupComponent(instance, container) {
   // 初始化props
-  initProps(instance);
-  // TODO initSlots() - 初始化slots
+  initProps(instance, instance.vnode.props);
+  // 初始化slots
+  initSlots(instance, instance.vnode.children);
   // 初始化setup函数返回值
   setupStatefulComponent(instance, container);
 }

@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-23 17:52:57
- * @LastEditTime: 2022-03-26 10:56:29
+ * @LastEditTime: 2022-03-27 11:35:10
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\runtime-core\componentPublicInstanceProxyHandlers.ts
@@ -13,6 +13,7 @@ import { hasOwn } from "../shared/index";
 // 扩展的实例Map
 const PublicInstanceMap = {
   $el: (i) => i.vnode.el,
+  $slots: (i) => i.slots,
 };
 
 export const PublicInstanceProxyHandlers = {
