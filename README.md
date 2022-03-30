@@ -1,7 +1,7 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-15 14:38:12
- * @LastEditTime: 2022-03-20 12:10:22
+ * @LastEditTime: 2022-03-30 22:32:11
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\README.md
@@ -21,19 +21,19 @@
 
 ### runtime-core
 
-- [ ] 支持组件类型
-- [ ] 支持 element 类型
-- [ ] 初始化 props
-- [ ] setup 可获取 props 和 context
-- [ ] 支持 component emit
+- [x] 支持组件类型
+- [x] 支持 element 类型
+- [x] 初始化 props
+- [x] setup 可获取 props 和 context
+- [x] 支持 component emit
 - [ ] 支持 proxy
-- [ ] 可以在 render 函数中获取 setup 返回的对象
+- [x] 可以在 render 函数中获取 setup 返回的对象
 - [ ] nextTick 的实现
-- [ ] 支持 getCurrentInstance
+- [x] 支持 getCurrentInstance
 - [ ] 支持 provide/inject
-- [ ] 支持最基础的 slots
-- [ ] 支持 Text 类型节点
-- [ ] 支持 $el api
+- [x] 支持最基础的 slots
+- [x] 支持 Text 类型节点
+- [x] 支持 $el api
 
 ### reactivity
 

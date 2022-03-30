@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-03-27 11:37:12
+ * @LastEditTime: 2022-03-30 22:41:51
  * @LastEditors: Lin zefan
  * @Description: 处理组件类型
  * @FilePath: \mini-vue3\src\runtime-core\component.ts
@@ -15,6 +15,9 @@ import { initProps } from "./componentProps";
 import { PublicInstanceProxyHandlers } from "./componentPublicInstanceProxyHandlers";
 import { initSlots } from "./componentSlot";
 import { patch } from "./render";
+
+// 全局变量，接收的是当前实例
+let currentInstance = null;
 
 export function processComponent(vnode, container) {
   // TODO，这里会比较vnode，然后做创建、更新操作，这里先处理创建
@@ -90,11 +93,20 @@ function setupStatefulComponent(instance, container) {
   if (setup) {
     /**
      * 1. setup接收props、context
+     * 2. 设置 currentInstance
      * 2. 执行setup
      */
+
+    setCurrentInstance(instance);
     const setupResult = setup(shallowReadonly(instance.props), {
       emit: instance.emit,
     });
+    /** 清除currentInstance
+     * 1. 每个组件的getCurrentInstance都是独立的
+     * 2. 每次初始化完setup，必须把currentInstance清空，避免影响其他
+     * 3. getCurrentInstance 只是 Composition API 的语法糖
+     */
+    setCurrentInstance(null);
     handleSetupResult(instance, setupResult);
   }
 }
@@ -138,6 +150,14 @@ function setupRenderEffect(instance, container) {
    * 3. 当前的dom元素也就是processElement中创建的dom元素
    */
   vnode.el = subTree.$el;
+}
+
+export function getCurrentInstance() {
+  return currentInstance;
+}
+
+function setCurrentInstance(instance) {
+  currentInstance = instance;
 }
 
 // ---------------------Component更新流程----------------------
