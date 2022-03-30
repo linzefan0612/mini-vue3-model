@@ -1,14 +1,14 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-27 12:03:47
- * @LastEditTime: 2022-03-27 14:27:45
+ * @LastEditTime: 2022-03-30 21:45:42
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\runtime-core\helpers\renderSlots.ts
  *
  */
 
-import { createdVNode } from "../vnode";
+import { createdVNode, Fragment } from "../vnode";
 
 export function renderSlots(slots, name = "default", props = {}) {
   /** 返回一个vnode
@@ -19,10 +19,10 @@ export function renderSlots(slots, name = "default", props = {}) {
   if (slot) {
     if (typeof slot === "function") {
       // 是一个函数，需要调用函数，并把当前作用域插槽的数据传过去，把调用结果渲染处理
-      return createdVNode("div", {}, slot(props));
+      return createdVNode(Fragment, {}, slot(props));
     }
     // 不是函数，是h对象，或者h对象数组集合
-    return createdVNode("div", {}, slot);
+    return createdVNode(Fragment, {}, slot);
   } else {
     return console.warn("没有找到对应的插槽");
   }

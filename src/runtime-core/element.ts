@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-22 17:32:00
- * @LastEditTime: 2022-03-25 20:30:08
+ * @LastEditTime: 2022-03-30 22:06:34
  * @LastEditors: Lin zefan
  * @Description: 处理dom
  * @FilePath: \mini-vue3\src\runtime-core\element.ts
@@ -12,11 +12,21 @@ import { patch } from "./render";
 
 // ---------------------Element创建流程----------------------
 export function processElement(vnode, container) {
+  mountElement(vnode, container);
+}
+function isEvents(key: string = "") {
+  const reg = /^on[A-Z]/;
+  if (reg.test(key)) {
+    // onClick -> click
+    return key.slice(2).toLocaleLowerCase();
+  }
+  return "";
+}
+
+function mountElement(vnode, container) {
   const { type, props, children } = vnode;
-  // 创建根元素
-  const el = document.createElement(type);
-  // 将dom元素挂载到实例
-  vnode.$el = el;
+  // 创建根元素、将dom元素挂载到实例
+  const el = (vnode.$el = document.createElement(type));
   // 设置行内属性
   for (const key in props) {
     const val = props[key];
@@ -31,26 +41,31 @@ export function processElement(vnode, container) {
       el.setAttribute(key, val);
     }
   }
-  // 设置元素内容
-  mountChildren(children, el, container);
-}
-function isEvents(key: string = "") {
-  const reg = /^on[A-Z]/;
-  if (reg.test(key)) {
-    // onClick -> click
-    return key.slice(2).toLocaleLowerCase();
-  }
-  return "";
-}
-function mountChildren(children, el, container) {
-  // 普通字符串，就直接插入元素
+
+  // 设置children
   if (typeof children === "string") {
     el.textContent = children;
     // 数组，可能存在多个子元素
   } else if (Array.isArray(children)) {
-    children.forEach((h) => {
-      patch(h, el);
-    });
+    mountChildren(children, el);
   }
+
   container.append(el);
+}
+
+function mountChildren(children, container) {
+  children.forEach((h) => {
+    patch(h, container);
+  });
+}
+
+// 创建一个Fragment节点
+export function processFragment(vnode: any, container: any) {
+  mountChildren(vnode.children, container);
+}
+
+// 创建一个TextNode节点
+export function processTextNode(vnode: any, container: any) {
+  const textNode = document.createTextNode(vnode.children);
+  container.append(textNode);
 }

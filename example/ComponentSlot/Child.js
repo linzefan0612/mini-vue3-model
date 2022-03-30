@@ -10,6 +10,7 @@ export default {
         renderSlots(this.$slots, "default", {
           age: 18,
         }),
+        renderSlots(this.$slots, "text"),
         renderSlots(this.$slots, "main", {
           content: "main的内容",
         }),

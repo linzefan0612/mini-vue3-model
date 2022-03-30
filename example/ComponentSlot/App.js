@@ -1,4 +1,4 @@
-import { h } from "../../lib/mini-vue.esm.js";
+import { h, createTextVNode } from "../../lib/mini-vue.esm.js";
 import Child from "./Child.js";
 
 export default {
@@ -18,9 +18,10 @@ export default {
             h("p", {}, "我是通过 slot 渲染出来的第二个元素"),
             h("p", {}, `我可以接收到 age: ${age}`),
           ],
-          // main: h("div", {}, "main"),
+          main: h("div", {}, "main"),
           footer: ({ name }) =>
             h("p", {}, "我是通过footer插槽 ，名字是：" + name),
+          text: createTextVNode("我是个text node"),
         }
       ),
     ]);
