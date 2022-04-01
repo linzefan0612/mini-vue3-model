@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 19:28:09
- * @LastEditTime: 2022-03-26 12:52:58
+ * @LastEditTime: 2022-04-01 18:27:13
  * @LastEditors: Lin zefan
  * @Description: 公用hook
  * @FilePath: \mini-vue3\src\shared\index.ts
@@ -40,4 +40,11 @@ export const capitalize = (event: string) => {
 
 export const handlerEventName = (event) => {
   return "on" + capitalize(camelize(event));
+};
+
+export const isDom = (rootContainer) => {
+  if (typeof rootContainer === "string") {
+    return document.querySelector(rootContainer);
+  }
+  return rootContainer;
 };

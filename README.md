@@ -1,7 +1,7 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-15 14:38:12
- * @LastEditTime: 2022-04-01 13:57:18
+ * @LastEditTime: 2022-04-01 21:45:43
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\README.md
@@ -64,4 +64,4 @@
 
 ### runtime-dom
 
-- [ ] 支持 custom renderer
+- [x] 支持 custom renderer

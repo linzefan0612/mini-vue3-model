@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-04-01 12:38:15
+ * @LastEditTime: 2022-04-01 18:07:42
  * @LastEditors: Lin zefan
  * @Description: 处理组件类型
  * @FilePath: \mini-vue3\src\runtime-core\component.ts
@@ -11,42 +11,14 @@
 import { shallowReadonly } from "../reactivity/index";
 import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
-
-import { PublicInstanceProxyHandlers } from "./componentPublicInstanceProxyHandlers";
 import { initSlots } from "./componentSlot";
-import { patch } from "./render";
+import { PublicInstanceProxyHandlers } from "./componentPublicInstanceProxyHandlers";
 
 // 全局变量，接收的是当前实例
 let currentInstance = null;
 
-export function processComponent(vnode, container, parentComponent) {
-  // TODO，这里会比较vnode，然后做创建、更新操作，这里先处理创建
-
-  // 创建组件
-  mountComponent(vnode, container, parentComponent);
-
-  // TODO，更新组件
-  //   updateComponent(vnode, container);
-}
-
-// -----------------Component创建流程-------------------
-function mountComponent(vnode, container, parentComponent) {
-  // 初始化Component实例
-  const instance = createComponentInstance(vnode, parentComponent);
-  // 初始化setup函数return的数据
-  setupComponent(instance, container);
-  /** 挂载render的this
-   * 1. 我们知道render里面可以使用this.xxx，例如setup return的数据、$el、$data等
-   * 2. 我们可以借助proxy来挂载我们的实例属性，让proxy代理
-   * 3. 最后render的时候，把this指向这个proxy，这样就可以通过 this.xx -> proxy.get(xx) 获取数据
-   */
-  createProxyInstance(instance);
-  // setupRenderEffect
-  setupRenderEffect(instance, container);
-}
-
 // 初始化Component结构
-function createComponentInstance(initVNode, parent) {
+export function createComponentInstance(initVNode, parent) {
   const component = {
     vnode: initVNode,
     type: initVNode.type,
@@ -75,13 +47,8 @@ function createComponentInstance(initVNode, parent) {
   return component;
 }
 
-// 初始化组件代理
-function createProxyInstance(instance) {
-  instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
-}
-
 // 初始化setup数据
-function setupComponent(instance, container) {
+export function setupComponent(instance, container) {
   // 初始化props
   initProps(instance, instance.vnode.props);
   // 初始化slots
@@ -90,8 +57,19 @@ function setupComponent(instance, container) {
   setupStatefulComponent(instance, container);
 }
 
+function createProxyInstance(instance) {
+  /** 挂载render的this
+   * 1. 我们知道render里面可以使用this.xxx，例如setup return的数据、$el、$data等
+   * 2. 我们可以借助proxy来挂载我们的实例属性，让proxy代理
+   * 3. 最后render的时候，把this指向这个proxy，这样就可以通过 this.xx -> proxy.get(xx) 获取数据
+   */
+  instance.proxy = new Proxy({ _: instance }, PublicInstanceProxyHandlers);
+}
 // 初始化setup返回值
 function setupStatefulComponent(instance, container) {
+  // 初始化组件代理
+  createProxyInstance(instance);
+
   /** 获取用户声明的setup函数过程
    * 1. 前面通过createApp将根组件转换为vnode
    * 2. 之后通过createComponentInstance将vnode进行二次包装
@@ -148,24 +126,6 @@ function finishComponentSetup(instance) {
   // 这里先不写
 }
 
-function setupRenderEffect(instance, container) {
-  const { proxy, vnode } = instance;
-  // 通过render函数，获取render返回虚拟节点，并绑定render的this
-  const subTree = instance.render.call(proxy);
-  /**
-   * 1. 调用组件render后把结果再次给到patch
-   * 2. 再把对应的dom节点append到container
-   * 3. 把当前实例传过去，让子组件可以通过parent获取父组件实例
-   */
-  patch(subTree, container, instance);
-  /** 挂载当前的dom元素到$el
-   * 1. 当遍历完所有Component组件后，会调用processElement
-   * 2. 在processElement中，会创建dom元素，把创建的dom元素挂载到传入的vnode里面
-   * 3. 当前的dom元素也就是processElement中创建的dom元素
-   */
-  vnode.el = subTree.$el;
-}
-
 export function getCurrentInstance() {
   return currentInstance;
 }
@@ -173,6 +133,3 @@ export function getCurrentInstance() {
 function setCurrentInstance(instance) {
   currentInstance = instance;
 }
-
-// ---------------------Component更新流程----------------------
-function updateComponent(vnode, container) {}
