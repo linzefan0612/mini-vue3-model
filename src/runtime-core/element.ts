@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-22 17:32:00
- * @LastEditTime: 2022-03-30 22:06:34
+ * @LastEditTime: 2022-04-01 11:30:00
  * @LastEditors: Lin zefan
  * @Description: 处理dom
  * @FilePath: \mini-vue3\src\runtime-core\element.ts
@@ -11,8 +11,8 @@
 import { patch } from "./render";
 
 // ---------------------Element创建流程----------------------
-export function processElement(vnode, container) {
-  mountElement(vnode, container);
+export function processElement(vnode, container, parentComponent) {
+  mountElement(vnode, container, parentComponent);
 }
 function isEvents(key: string = "") {
   const reg = /^on[A-Z]/;
@@ -23,7 +23,7 @@ function isEvents(key: string = "") {
   return "";
 }
 
-function mountElement(vnode, container) {
+function mountElement(vnode, container, parentComponent) {
   const { type, props, children } = vnode;
   // 创建根元素、将dom元素挂载到实例
   const el = (vnode.$el = document.createElement(type));
@@ -47,21 +47,21 @@ function mountElement(vnode, container) {
     el.textContent = children;
     // 数组，可能存在多个子元素
   } else if (Array.isArray(children)) {
-    mountChildren(children, el);
+    mountChildren(children, el, parentComponent);
   }
 
   container.append(el);
 }
 
-function mountChildren(children, container) {
+function mountChildren(children, container, parentComponent) {
   children.forEach((h) => {
-    patch(h, container);
+    patch(h, container, parentComponent);
   });
 }
 
 // 创建一个Fragment节点
-export function processFragment(vnode: any, container: any) {
-  mountChildren(vnode.children, container);
+export function processFragment(vnode: any, container: any, parentComponent) {
+  mountChildren(vnode.children, container, parentComponent);
 }
 
 // 创建一个TextNode节点

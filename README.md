@@ -1,7 +1,7 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-15 14:38:12
- * @LastEditTime: 2022-03-30 22:32:11
+ * @LastEditTime: 2022-04-01 13:57:18
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\README.md
@@ -30,7 +30,7 @@
 - [x] 可以在 render 函数中获取 setup 返回的对象
 - [ ] nextTick 的实现
 - [x] 支持 getCurrentInstance
-- [ ] 支持 provide/inject
+- [x] 支持 provide/inject
 - [x] 支持最基础的 slots
 - [x] 支持 Text 类型节点
 - [x] 支持 $el api

@@ -5,7 +5,7 @@
   "esm": "./lib/mini-vue.esm.js",
   "scripts": {
     "test": "jest",
-    "build": "rollup -c rollup.config.js"
+    "build": "rollup -c rollup.config.js --watch"
   },
   "repository": "git@github.com:linzefan0612/mini-vue3-model.git",
   "author": "linzefan0612",

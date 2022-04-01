@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-03-30 22:41:51
+ * @LastEditTime: 2022-04-01 12:38:15
  * @LastEditors: Lin zefan
  * @Description: 处理组件类型
  * @FilePath: \mini-vue3\src\runtime-core\component.ts
@@ -19,20 +19,20 @@ import { patch } from "./render";
 // 全局变量，接收的是当前实例
 let currentInstance = null;
 
-export function processComponent(vnode, container) {
+export function processComponent(vnode, container, parentComponent) {
   // TODO，这里会比较vnode，然后做创建、更新操作，这里先处理创建
 
   // 创建组件
-  mountComponent(vnode, container);
+  mountComponent(vnode, container, parentComponent);
 
   // TODO，更新组件
   //   updateComponent(vnode, container);
 }
 
 // -----------------Component创建流程-------------------
-function mountComponent(vnode, container) {
+function mountComponent(vnode, container, parentComponent) {
   // 初始化Component实例
-  const instance = createComponentInstance(vnode);
+  const instance = createComponentInstance(vnode, parentComponent);
   // 初始化setup函数return的数据
   setupComponent(instance, container);
   /** 挂载render的this
@@ -46,7 +46,7 @@ function mountComponent(vnode, container) {
 }
 
 // 初始化Component结构
-function createComponentInstance(initVNode) {
+function createComponentInstance(initVNode, parent) {
   const component = {
     vnode: initVNode,
     type: initVNode.type,
@@ -54,7 +54,17 @@ function createComponentInstance(initVNode) {
     setupState: {},
     props: {},
     slots: {},
+    /** 当前的 providers 指向父级的 providers，解决跨层取值，但是有缺陷
+     * 1. 引用的关系会影响父组件，当子组件注入同名的foo，就会影响到父组件的foo
+     * const father = { foo:1};
+       const children = father;
+       children.foo =2;
+       console.log(father, children)
+     */
+    providers: parent ? parent.providers : {},
     emit: () => {},
+    // 挂载父组件实例
+    parent,
   };
 
   /** 注册emit
@@ -142,8 +152,12 @@ function setupRenderEffect(instance, container) {
   const { proxy, vnode } = instance;
   // 通过render函数，获取render返回虚拟节点，并绑定render的this
   const subTree = instance.render.call(proxy);
-  // 最后通过patch的processElement，将subTree渲染到container(节点)上
-  patch(subTree, container);
+  /**
+   * 1. 调用组件render后把结果再次给到patch
+   * 2. 再把对应的dom节点append到container
+   * 3. 把当前实例传过去，让子组件可以通过parent获取父组件实例
+   */
+  patch(subTree, container, instance);
   /** 挂载当前的dom元素到$el
    * 1. 当遍历完所有Component组件后，会调用processElement
    * 2. 在processElement中，会创建dom元素，把创建的dom元素挂载到传入的vnode里面
