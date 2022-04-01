@@ -1,14 +1,16 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-22 17:32:00
- * @LastEditTime: 2022-04-01 11:30:00
+ * @LastEditTime: 2022-04-01 15:46:12
  * @LastEditors: Lin zefan
  * @Description: 处理dom
  * @FilePath: \mini-vue3\src\runtime-core\element.ts
  *
  */
 
+import { ShapeFlags } from "../shared/ShapeFlags";
 import { patch } from "./render";
+import { getChildrenShapeFlags } from "./vnode";
 
 // ---------------------Element创建流程----------------------
 export function processElement(vnode, container, parentComponent) {
@@ -42,11 +44,11 @@ function mountElement(vnode, container, parentComponent) {
     }
   }
 
+  const shapeFlags = getChildrenShapeFlags(children);
   // 设置children
-  if (typeof children === "string") {
+  if (shapeFlags === ShapeFlags.TEXT_CHILDREN) {
     el.textContent = children;
-    // 数组，可能存在多个子元素
-  } else if (Array.isArray(children)) {
+  } else if (shapeFlags === ShapeFlags.ARRAY_CHILDREN) {
     mountChildren(children, el, parentComponent);
   }
 
