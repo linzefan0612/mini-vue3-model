@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-16 18:30:25
- * @LastEditTime: 2022-03-20 12:09:02
+ * @LastEditTime: 2022-04-02 13:05:39
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\baseHandlers.ts
@@ -30,7 +30,6 @@ function createdGetter(isReadonly = false, shallow = false) {
     if (isObject(res) && !shallow) {
       return isReadonly ? readonly(res) : reactive(res);
     }
-
     // 如果是readonly，不会进行收集
     !isReadonly && track(target, key);
 
