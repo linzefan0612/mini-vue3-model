@@ -1,13 +1,14 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:04:58
- * @LastEditTime: 2022-04-01 21:37:56
+ * @LastEditTime: 2022-04-02 11:44:47
  * @LastEditors: Lin zefan
  * @Description:
  * @FilePath: \mini-vue3\src\runtime-core\render.ts
  *
  */
 
+import { effect } from "../reactivity/effect";
 import { ShapeFlags } from "../shared/ShapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
 import { createAppAPI } from "./createdApp";
@@ -26,23 +27,22 @@ export function createRenderer(options) {
     patchProp: hostPatchProp,
     selector: hostSelector,
   } = options;
-  // other code ...
 
   function render(vnode, container) {
     // 根组件没有父级，所以是null
-    patch(vnode, container, null);
+    patch(null, vnode, container, null);
   }
 
-  function patch(vnode, container, parentComponent) {
-    if (!vnode) return;
-    const { type } = vnode;
+  function patch(n1, n2, container, parentComponent) {
+    if (!n2) return;
+    const { type } = n2;
 
     switch (type) {
       case Fragment:
-        processFragment(vnode, container, parentComponent);
+        processFragment(n1, n2, container, parentComponent);
         break;
       case TextNode:
-        processTextNode(vnode, container);
+        processTextNode(n2, container);
         break;
 
       default:
@@ -50,10 +50,10 @@ export function createRenderer(options) {
 
         if (shapeFlags === ShapeFlags.COMPONENT) {
           // 是一个Component
-          processComponent(vnode, container, parentComponent);
+          processComponent(n1, n2, container, parentComponent);
         } else if (shapeFlags === ShapeFlags.ELEMENT) {
           // 是一个element
-          processElement(vnode, container, parentComponent);
+          processElement(n1, n2, container, parentComponent);
         }
 
         break;
@@ -61,8 +61,8 @@ export function createRenderer(options) {
   }
 
   // 创建一个Fragment节点
-  function processFragment(vnode: any, container: any, parentComponent) {
-    mountChildren(vnode.children, container, parentComponent);
+  function processFragment(n1, n2: any, container: any, parentComponent) {
+    mountChildren(n2.children, container, parentComponent);
   }
 
   // 创建一个TextNode节点
@@ -72,8 +72,12 @@ export function createRenderer(options) {
   }
 
   // ---------------------Element----------------------
-  function processElement(vnode, container, parentComponent) {
-    mountElement(vnode, container, parentComponent);
+  function processElement(n1, n2, container, parentComponent) {
+    if (!n1) {
+      mountElement(n2, container, parentComponent);
+    } else {
+      updateElement(n1, n2, container, parentComponent);
+    }
   }
   // ---------------------Element创建流程----------------------
   function mountElement(vnode, container, parentComponent) {
@@ -100,19 +104,27 @@ export function createRenderer(options) {
 
   function mountChildren(children, container, parentComponent) {
     children.forEach((h) => {
-      patch(h, container, parentComponent);
+      patch(null, h, container, parentComponent);
     });
   }
 
+  // ---------------------Element更新流程----------------------
+
+  function updateElement(n1, n2, container, parentComponent) {
+    console.log("updateElement更新");
+    console.log("旧vnode", n1);
+    console.log("新vnode", n2);
+  }
+
   // ---------------------Component---------------------------
-  function processComponent(vnode, container, parentComponent) {
-    // TODO，这里会比较vnode，然后做创建、更新操作，这里先处理创建
-
-    // 创建组件
-    mountComponent(vnode, container, parentComponent);
-
-    // TODO，更新组件
-    //   updateComponent(vnode, container);
+  function processComponent(n1, n2, container, parentComponent) {
+    if (!n1) {
+      // 创建组件
+      mountComponent(n2, container, parentComponent);
+    } else {
+      // 更新组件
+      updateComponent(n1, n2, container, parentComponent);
+    }
   }
 
   // -----------------Component创建流程-------------------
@@ -127,26 +139,55 @@ export function createRenderer(options) {
   }
 
   function setupRenderEffect(instance, container) {
-    const { proxy, vnode } = instance;
-    // 通过render函数，获取render返回虚拟节点，并绑定render的this
-    const subTree = instance.render.call(proxy);
-    /**
-     * 1. 调用组件render后把结果再次给到patch
-     * 2. 再把对应的dom节点append到container
-     * 3. 把当前实例传过去，让子组件可以通过parent获取父组件实例
-     */
-    patch(subTree, container, instance);
-    /** 挂载当前的dom元素到$el
-     * 1. 当遍历完所有Component组件后，会调用processElement
-     * 2. 在processElement中，会创建dom元素，把创建的dom元素挂载到传入的vnode里面
-     * 3. 当前的dom元素也就是processElement中创建的dom元素
-     */
-    vnode.el = subTree.$el;
+    effect(() => {
+      // 初始化vnode
+      if (!instance.isMounted) {
+        let { proxy, vnode } = instance;
+        // 通过render函数，获取render返回虚拟节点，并绑定render的this
+        const subTree = instance.render.call(proxy);
+        /**
+         * 1. 调用组件render后把结果再次给到patch
+         * 2. 再把对应的dom节点append到container
+         * 3. 把当前实例传过去，让子组件可以通过parent获取父组件实例
+         */
+        patch(null, subTree, container, instance);
+        /** 挂载当前的dom元素到$el
+         * 1. 当遍历完所有Component组件后，会调用processElement
+         * 2. 在processElement中，会创建dom元素，把创建的dom元素挂载到传入的vnode里面
+         * 3. 当前的dom元素也就是processElement中创建的dom元素
+         */
+        vnode.el = subTree.$el;
+        // 更新初始化状态
+        instance.isMounted = true;
+        // 保存当前vnode
+        instance.preTree = subTree;
+      } else {
+        let { proxy } = instance;
+        // 通过render函数，获取render返回虚拟节点，并绑定render的this
+        const nowTree = instance.render.call(proxy);
+        // 旧vnode
+        const preTree = instance.preTree;
+        // 对比新老vnode
+        patch(preTree, nowTree, container, instance);
+        // 更新旧的vnode
+        instance.preTree = nowTree;
+      }
+    });
+  }
+
+  // -----------------Component更新流程-------------------
+  function updateComponent(n1, n2, container, parentComponent) {
+    console.log("updateComponent更新");
+    console.log("旧vnode", n1);
+    console.log("新vnode", n2);
   }
 
   // 暴露
   return {
-    // 将createApp方法暴露出去
+    /** 将createApp方法暴露出去
+     * 参数一为 render渲染函数，调用patch
+     * 参数二为 是一个函数，返回一个节点，是可选的
+     */
     createApp: createAppAPI(render, hostSelector),
   };
 }

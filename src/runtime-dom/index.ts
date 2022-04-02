@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-04-01 16:53:01
- * @LastEditTime: 2022-04-01 18:28:04
+ * @LastEditTime: 2022-04-01 22:16:15
  * @LastEditors: Lin zefan
  * @Description: dom渲染
  * @FilePath: \mini-vue3\src\runtime-dom\index.ts
@@ -11,7 +11,6 @@
 import { createRenderer } from "../runtime-core/render";
 import { isDom } from "../shared/index";
 
-// 默认给定面向 DOM 平台的渲染接口
 export function createElement(type) {
   return document.createElement(type);
 }
@@ -55,9 +54,13 @@ const renderer: any = createRenderer({
   selector,
 });
 
-// 然后暴露出 createApp
+/**
+ * 暴露 createApp，这个方法就是创建vue实例的方法
+ * @param args 当前的根节点，一般是App.js
+ */
 export const createApp = (...args) => {
   return renderer.createApp(...args);
 };
 
+// runtime-core是底层逻辑，放到这边暴露出去
 export * from "../runtime-core/index";

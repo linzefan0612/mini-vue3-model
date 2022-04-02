@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-04-01 18:07:42
+ * @LastEditTime: 2022-04-02 11:31:17
  * @LastEditors: Lin zefan
  * @Description: 处理组件类型
  * @FilePath: \mini-vue3\src\runtime-core\component.ts
@@ -13,6 +13,7 @@ import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 import { initSlots } from "./componentSlot";
 import { PublicInstanceProxyHandlers } from "./componentPublicInstanceProxyHandlers";
+import { proxyRefs } from "../reactivity/ref";
 
 // 全局变量，接收的是当前实例
 let currentInstance = null;
@@ -37,6 +38,8 @@ export function createComponentInstance(initVNode, parent) {
     emit: () => {},
     // 挂载父组件实例
     parent,
+    isMounted: false,
+    preTree: {},
   };
 
   /** 注册emit
@@ -80,9 +83,9 @@ function setupStatefulComponent(instance, container) {
   const { setup } = component;
   if (setup) {
     /**
-     * 1. setup接收props、context
+     * 1. setup接收props、context，props是只读的
      * 2. 设置 currentInstance
-     * 2. 执行setup
+     * 2. 执行setup函数
      */
 
     setCurrentInstance(instance);
@@ -92,7 +95,7 @@ function setupStatefulComponent(instance, container) {
     /** 清除currentInstance
      * 1. 每个组件的getCurrentInstance都是独立的
      * 2. 每次初始化完setup，必须把currentInstance清空，避免影响其他
-     * 3. getCurrentInstance 只是 Composition API 的语法糖
+     * 3. getCurrentInstance 只是 Composition API 的语法糖，清空也能避免其他地方调用
      */
     setCurrentInstance(null);
     handleSetupResult(instance, setupResult);
@@ -107,7 +110,8 @@ function handleSetupResult(instance, setupResult) {
    */
   // 如果是对象，将对象注入上下文
   if (typeof setupResult === "object") {
-    instance.setupState = setupResult;
+    // 利用proxyRefs解构ref对象
+    instance.setupState = proxyRefs(setupResult);
   } else {
     // 如果是函数，那么当作render处理TODO
   }
