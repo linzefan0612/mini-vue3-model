@@ -1,10 +1,10 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-16 18:30:25
- * @LastEditTime: 2022-04-02 13:05:39
+ * @LastEditTime: 2022-04-02 15:00:18
  * @LastEditors: Lin zefan
  * @Description:
- * @FilePath: \mini-vue3\src\reactivity\baseHandlers.ts
+ * @FilePath: windowmini-vue3windowsrcwindowreactivitywindowbaseHandlers.ts
  *
  */
 import { reactive, ReactiveEnum, readonly } from ".";

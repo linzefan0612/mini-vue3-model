@@ -1,14 +1,15 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:04:58
- * @LastEditTime: 2022-04-02 11:44:47
+ * @LastEditTime: 2022-04-02 17:00:29
  * @LastEditors: Lin zefan
  * @Description:
- * @FilePath: \mini-vue3\src\runtime-core\render.ts
+ * @FilePath: windowmini-vue3windowsrcwindowruntime-corewindowrender.ts
  *
  */
 
 import { effect } from "../reactivity/effect";
+import { EMPTY_OBJECT } from "../shared";
 import { ShapeFlags } from "../shared/ShapeFlags";
 import { createComponentInstance, setupComponent } from "./component";
 import { createAppAPI } from "./createdApp";
@@ -33,6 +34,12 @@ export function createRenderer(options) {
     patch(null, vnode, container, null);
   }
 
+  /**
+   * @param n1 旧vnode
+   * @param n2 新vnode
+   * @param container 容器
+   * @param parentComponent 父组件实例
+   */
   function patch(n1, n2, container, parentComponent) {
     if (!n2) return;
     const { type } = n2;
@@ -84,7 +91,7 @@ export function createRenderer(options) {
     const { type, props, children } = vnode;
 
     // 创建根元素、将元素挂载到实例
-    const el = (vnode.$el = hostCreateElement(type));
+    const el = (vnode.el = hostCreateElement(type));
 
     // 设置行内属性
     for (const key in props) {
@@ -111,9 +118,35 @@ export function createRenderer(options) {
   // ---------------------Element更新流程----------------------
 
   function updateElement(n1, n2, container, parentComponent) {
-    console.log("updateElement更新");
-    console.log("旧vnode", n1);
-    console.log("新vnode", n2);
+    // 更新props
+    patchProps(n1, n2);
+  }
+
+  function patchProps(n1: any, n2: any) {
+    const prevProps = n1.props || EMPTY_OBJECT;
+    const nowProps = n2.props || EMPTY_OBJECT;
+    // 相等不操作
+    if (prevProps === nowProps) return;
+
+    // dom元素取的是旧vnode，覆盖新vnode的el
+    const el = (n2.el = n1.el);
+    
+    // 值新增、变更的情况
+    for (const key in nowProps) {
+      if (prevProps[key] !== nowProps[key]) {
+        hostPatchProp(el, key, nowProps);
+      }
+    }
+
+    // 旧的props为空，不遍历
+    if (EMPTY_OBJECT === prevProps) return;
+
+    // 键不存在删除
+    for (const key in prevProps) {
+      if (!(key in nowProps)) {
+        hostPatchProp(el, key, null);
+      }
+    }
   }
 
   // ---------------------Component---------------------------
@@ -156,7 +189,7 @@ export function createRenderer(options) {
          * 2. 在processElement中，会创建dom元素，把创建的dom元素挂载到传入的vnode里面
          * 3. 当前的dom元素也就是processElement中创建的dom元素
          */
-        vnode.el = subTree.$el;
+        vnode.el = subTree.el;
         // 更新初始化状态
         instance.isMounted = true;
         // 保存当前vnode

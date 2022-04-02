@@ -1,10 +1,10 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-17 18:23:36
- * @LastEditTime: 2022-04-02 13:15:08
+ * @LastEditTime: 2022-04-02 15:19:43
  * @LastEditors: Lin zefan
  * @Description: ref
- * @FilePath: \mini-vue3\src\reactivity\ref.ts
+ * @FilePath: windowmini-vue3windowsrcwindowreactivitywindowref.ts
  *
  */
 import { reactive } from ".";
@@ -39,6 +39,7 @@ class RefImpl {
      * 2. 更新ref.value
      * 3. 更新依赖的值
      */
+
     if (hasChanged(this._value, newVal)) return;
     this._value = convert(newVal);
     triggerEffect(this._dep);

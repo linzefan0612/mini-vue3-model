@@ -1,10 +1,10 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 13:11:07
- * @LastEditTime: 2022-04-02 13:04:54
+ * @LastEditTime: 2022-04-02 14:10:29
  * @LastEditors: Lin zefan
  * @Description:
- * @FilePath: \mini-vue3\src\reactivity\effect.ts
+ * @FilePath: windowmini-vue3windowsrcwindowreactivitywindoweffect.ts
  *
  */
 
@@ -104,8 +104,10 @@ export function trackEffect(dep) {
 // 触发依赖
 export function trigger(target, key) {
   let depMap = targetMap.get(target);
-  let dep = depMap.get(key);
-  triggerEffect(dep);
+  if (depMap) {
+    let dep = depMap.get(key);
+    triggerEffect(dep);
+  }
 }
 export function triggerEffect(dep) {
   for (const effect of dep) {

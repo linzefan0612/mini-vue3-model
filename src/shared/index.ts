@@ -1,10 +1,10 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 19:28:09
- * @LastEditTime: 2022-04-01 18:27:13
+ * @LastEditTime: 2022-04-02 15:18:03
  * @LastEditors: Lin zefan
  * @Description: 公用hook
- * @FilePath: \mini-vue3\src\shared\index.ts
+ * @FilePath: windowmini-vue3windowsrcwindowsharedwindowindex.ts
  *
  */
 
@@ -48,3 +48,5 @@ export const isDom = (rootContainer) => {
   }
   return rootContainer;
 };
+
+export const EMPTY_OBJECT = {};

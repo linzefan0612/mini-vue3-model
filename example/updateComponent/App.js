@@ -1,10 +1,10 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 21:46:14
- * @LastEditTime: 2022-04-02 13:27:06
+ * @LastEditTime: 2022-04-02 15:41:35
  * @LastEditors: Lin zefan
  * @Description:
- * @FilePath: \mini-vue3\example\updateComponent\App.js
+ * @FilePath: windowmini-vue3windowexamplewindowupdateComponentwindowApp.js
  *
  */
 
@@ -33,9 +33,10 @@ export default {
     function patchProp3() {
       // 逻辑3: old 存在，new 不存在，remove new
       props.value = {
-        bar: "bar",
+        car: "car",
       };
     }
+
     return {
       counter,
       props,
@@ -49,8 +50,9 @@ export default {
     return h(
       "div",
       {
-        // foo: this.props.foo,
-        // bar: this.props.bar,
+        foo: this.props.foo,
+        bar: this.props.bar,
+        car: this.props.car,
       },
       [
         h("div", {}, "" + this.counter),
