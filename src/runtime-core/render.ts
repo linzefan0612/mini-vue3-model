@@ -1,10 +1,10 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:04:58
- * @LastEditTime: 2022-04-02 17:00:29
- * @LastEditors: Lin zefan
+ * @LastEditTime: 2022-04-04 12:34:47
+ * @LastEditors: Lin ZeFan
  * @Description:
- * @FilePath: windowmini-vue3windowsrcwindowruntime-corewindowrender.ts
+ * @FilePath: \mini-vue3\src\runtime-core\render.ts
  *
  */
 
@@ -27,6 +27,8 @@ export function createRenderer(options) {
     insert: hostInsert,
     patchProp: hostPatchProp,
     selector: hostSelector,
+    setElementText: hostSetElementText,
+    remove: hostRemove,
   } = options;
 
   function render(vnode, container) {
@@ -120,6 +122,8 @@ export function createRenderer(options) {
   function updateElement(n1, n2, container, parentComponent) {
     // 更新props
     patchProps(n1, n2);
+    // 更新children
+    patchChildren(n1, n2, container, parentComponent);
   }
 
   function patchProps(n1: any, n2: any) {
@@ -130,7 +134,7 @@ export function createRenderer(options) {
 
     // dom元素取的是旧vnode，覆盖新vnode的el
     const el = (n2.el = n1.el);
-    
+
     // 值新增、变更的情况
     for (const key in nowProps) {
       if (prevProps[key] !== nowProps[key]) {
@@ -149,6 +153,55 @@ export function createRenderer(options) {
     }
   }
 
+  function patchChildren(
+    n1: any,
+    n2: any,
+    container: any,
+    parentComponent: any
+  ) {
+    const { el, children: n1Children } = n1;
+    const { children: n2Children } = n2;
+    const n1ShapeFlags = getChildrenShapeFlags(n1Children);
+    const n2ShapeFlags = getChildrenShapeFlags(n2Children);
+
+    if (n1ShapeFlags === ShapeFlags.TEXT_CHILDREN) {
+      if (n2ShapeFlags === ShapeFlags.TEXT_CHILDREN) {
+        // text -> text
+        // 直接覆盖值
+        hostSetElementText(el, n2Children);
+      } else {
+        /** text -> array
+         * 1. 先清空原先的text
+         * 2. 再push进新的children
+         */
+        hostSetElementText(el, "");
+        mountChildren(n2Children, el, parentComponent);
+      }
+    } else {
+      if (n2ShapeFlags === ShapeFlags.TEXT_CHILDREN) {
+        /** array -> text
+         * 1. 删除子元素
+         * 2. 重新赋值
+         */
+        unmountChildren(n1Children);
+        hostSetElementText(el, n2Children);
+      } else {
+        // TODO
+        /** array -> array
+         *
+         */
+
+        console.log("数组转数组");
+      }
+    }
+  }
+  function unmountChildren(child) {
+    for (let index = 0; index < child.length; index++) {
+      // 是一个h对象，当前dom元素存在el
+      const element = child[index] && child[index].el;
+      hostRemove(element);
+    }
+  }
   // ---------------------Component---------------------------
   function processComponent(n1, n2, container, parentComponent) {
     if (!n1) {

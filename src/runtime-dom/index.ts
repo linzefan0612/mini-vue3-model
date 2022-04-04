@@ -1,10 +1,10 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-04-01 16:53:01
- * @LastEditTime: 2022-04-02 17:02:58
- * @LastEditors: Lin zefan
+ * @LastEditTime: 2022-04-04 12:31:26
+ * @LastEditors: Lin ZeFan
  * @Description: dom渲染
- * @FilePath: windowmini-vue3windowsrcwindowruntime-domwindowindex.ts
+ * @FilePath: \mini-vue3\src\runtime-dom\index.ts
  *
  */
 
@@ -51,11 +51,22 @@ export function selector(container) {
   return isDom(container);
 }
 
+export function setElementText(el, text) {
+  el.textContent = text;
+}
+
+export function remove(child) {
+  const parentNode = child.parentNode;
+  parentNode && parentNode.removeChild(child);
+}
+
 const renderer: any = createRenderer({
   createElement,
   patchProp,
   insert,
   selector,
+  setElementText,
+  remove,
 });
 
 /**
