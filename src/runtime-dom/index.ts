@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-04-01 16:53:01
- * @LastEditTime: 2022-04-05 11:12:16
+ * @LastEditTime: 2022-04-05 13:22:20
  * @LastEditors: Lin ZeFan
  * @Description: dom渲染
  * @FilePath: \mini-vue3\src\runtime-dom\index.ts
@@ -25,7 +25,7 @@ const isEvents = (key: string = "") => {
 };
 
 export function patchProp(el, key, props) {
-  const val = props[key] || null;
+  const val = (props && props[key]) || null;
   /** 注册事件
    * 1. 判断是否on开头并包含一个大写字母开头
    * 2. 是的话，截取on后面的内容
