@@ -1,7 +1,7 @@
 /*
  * @Author: Lin ZeFan
  * @Date: 2022-04-04 11:44:52
- * @LastEditTime: 2022-04-04 11:44:52
+ * @LastEditTime: 2022-04-05 12:25:47
  * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\example\patchChildren\ArrayToArray.js
@@ -61,12 +61,12 @@ import { ref, h } from "../../lib/mini-vue.esm.js";
 // (a b)
 // c (a b)
 // i = 0, e1 = -1, e2 = 0
-// const prevChildren = [h('p', { key: 'A' }, 'A'), h('p', { key: 'B' }, 'B')]
-// const nextChildren = [
-//   h('p', { key: 'C' }, 'C'),
-//   h('p', { key: 'A' }, 'A'),
-//   h('p', { key: 'B' }, 'B'),
-// ]
+const prevChildren = [h('p', { key: 'A' }, 'A'), h('p', { key: 'B' }, 'B')]
+const nextChildren = [
+  h('p', { key: 'C' }, 'C'),
+  h('p', { key: 'A' }, 'A'),
+  h('p', { key: 'B' }, 'B'),
+]
 
 // 4. 老的比新的长
 //     删除老的
@@ -86,12 +86,12 @@ import { ref, h } from "../../lib/mini-vue.esm.js";
 // (b c)
 // i = 0, e1 = 0, e2 = -1
 
-const prevChildren = [
-  h("p", { key: "A" }, "A"),
-  h("p", { key: "B" }, "B"),
-  h("p", { key: "C" }, "C"),
-];
-const nextChildren = [h("p", { key: "B" }, "B"), h("p", { key: "C" }, "C")];
+// const prevChildren = [
+//   h("p", { key: "A" }, "A"),
+//   h("p", { key: "B" }, "B"),
+//   h("p", { key: "C" }, "C"),
+// ];
+// const nextChildren = [h("p", { key: "B" }, "B"), h("p", { key: "C" }, "C")];
 
 export default {
   name: "ArrayToArray",

@@ -1,10 +1,10 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-04-02 15:35:37
- * @LastEditors: Lin zefan
+ * @LastEditTime: 2022-04-04 23:17:46
+ * @LastEditors: Lin ZeFan
  * @Description: 处理组件类型
- * @FilePath: windowmini-vue3windowsrcwindowruntime-corewindowcomponent.ts
+ * @FilePath: \mini-vue3\src\runtime-core\component.ts
  *
  */
 

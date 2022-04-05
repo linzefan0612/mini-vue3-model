@@ -1,8 +1,8 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 21:58:19
- * @LastEditTime: 2022-04-01 21:37:13
- * @LastEditors: Lin zefan
+ * @LastEditTime: 2022-04-05 12:04:03
+ * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\runtime-core\vnode.ts
  *
@@ -26,6 +26,7 @@ export function createdVNode(type, props?, children?) {
     type,
     props,
     children,
+    key: props && props.key,
   };
 
   return vnode;

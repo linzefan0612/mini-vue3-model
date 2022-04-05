@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-04-01 16:53:01
- * @LastEditTime: 2022-04-04 12:31:26
+ * @LastEditTime: 2022-04-05 11:12:16
  * @LastEditors: Lin ZeFan
  * @Description: dom渲染
  * @FilePath: \mini-vue3\src\runtime-dom\index.ts
@@ -43,8 +43,12 @@ export function patchProp(el, key, props) {
   }
 }
 
-export function insert(el, parent) {
-  parent.appendChild(el);
+export function insert(el, parent, anchor) {
+  /** 根据锚点插入到对应位置
+   * 1. anchor为null默认插到尾部
+   * 2. anchor不为空，则插到anchor对应的元素之前
+   */
+  parent.insertBefore(el, anchor || null);
 }
 
 export function selector(container) {
