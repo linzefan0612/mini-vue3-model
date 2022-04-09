@@ -1,14 +1,19 @@
 /*
  * @Author: Lin ZeFan
  * @Date: 2022-04-09 13:18:11
- * @LastEditTime: 2022-04-09 13:26:01
+ * @LastEditTime: 2022-04-09 17:43:46
  * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\example\nextTicker\NextTicker.js
  *
  */
 // 测试 nextTick 逻辑
-import { h, ref, getCurrentInstance } from "../../lib/mini-vue.esm.js";
+import {
+  h,
+  ref,
+  getCurrentInstance,
+  nextTick,
+} from "../../lib/mini-vue.esm.js";
 
 // 如果 for 循环改变 count 的值 100 次的话
 // 会同时触发 100 次的 update 页面逻辑
@@ -36,6 +41,9 @@ const Child2 = {
       for (let index = 0; index < 100; index++) {
         count.value++;
       }
+      nextTick(() => {
+        console.log("currentInstance--nextTick", currentInstance);
+      });
       console.log("currentInstance", currentInstance);
     }
 
