@@ -1,8 +1,8 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-23 17:52:57
- * @LastEditTime: 2022-03-27 11:35:10
- * @LastEditors: Lin zefan
+ * @LastEditTime: 2022-04-09 10:43:19
+ * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\runtime-core\componentPublicInstanceProxyHandlers.ts
  *
@@ -14,6 +14,7 @@ import { hasOwn } from "../shared/index";
 const PublicInstanceMap = {
   $el: (i) => i.vnode.el,
   $slots: (i) => i.slots,
+  $props: (i) => i.props,
 };
 
 export const PublicInstanceProxyHandlers = {

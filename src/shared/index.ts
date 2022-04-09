@@ -1,10 +1,10 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 19:28:09
- * @LastEditTime: 2022-04-02 15:18:03
- * @LastEditors: Lin zefan
+ * @LastEditTime: 2022-04-09 10:55:40
+ * @LastEditors: Lin ZeFan
  * @Description: 公用hook
- * @FilePath: windowmini-vue3windowsrcwindowsharedwindowindex.ts
+ * @FilePath: \mini-vue3\src\shared\index.ts
  *
  */
 
@@ -50,3 +50,7 @@ export const isDom = (rootContainer) => {
 };
 
 export const EMPTY_OBJECT = {};
+
+export function isNumber(value) {
+  return typeof value === "number" && !isNaN(value);
+}

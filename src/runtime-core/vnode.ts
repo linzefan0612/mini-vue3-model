@@ -1,13 +1,14 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 21:58:19
- * @LastEditTime: 2022-04-08 19:55:43
+ * @LastEditTime: 2022-04-09 10:57:05
  * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\runtime-core\vnode.ts
  *
  */
 
+import { isNumber } from "../shared";
 import { ShapeFlags } from "../shared/ShapeFlags";
 
 export const TextNode = Symbol("TextNode");
@@ -41,7 +42,7 @@ export function getShapeFlags(type) {
   return typeof type === "string" ? ShapeFlags.ELEMENT : ShapeFlags.COMPONENT;
 }
 export function getChildrenShapeFlags(children) {
-  return typeof children === "string"
+  return typeof children === "string" || isNumber(children)
     ? ShapeFlags.TEXT_CHILDREN
     : typeof children === "object"
     ? ShapeFlags.ARRAY_CHILDREN

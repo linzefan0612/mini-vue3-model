@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-04-04 23:17:46
+ * @LastEditTime: 2022-04-09 11:59:44
  * @LastEditors: Lin ZeFan
  * @Description: 处理组件类型
  * @FilePath: \mini-vue3\src\runtime-core\component.ts
@@ -23,6 +23,11 @@ export function createComponentInstance(initVNode, parent) {
   const component = {
     vnode: initVNode,
     type: initVNode.type,
+    component: null,
+    // effect
+    runner: null,
+    next: null,
+    // 挂载this
     proxy: null,
     setupState: {},
     props: {},
