@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:04:58
- * @LastEditTime: 2022-04-09 12:51:09
+ * @LastEditTime: 2022-04-09 15:01:49
  * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\runtime-core\render.ts
@@ -20,6 +20,7 @@ import {
   getShapeFlags,
   TextNode,
 } from "./vnode";
+import { queueJobs } from "./scheduler";
 
 export function createRenderer(options) {
   // 改名字是为了 debug 方便
@@ -463,45 +464,53 @@ export function createRenderer(options) {
   }
 
   function setupRenderEffect(instance, container, anchor) {
-    instance.runner = effect(() => {
-      // 初始化vnode
-      if (!instance.isMounted) {
-        let { proxy, vnode } = instance;
-        // 通过render函数，获取render返回虚拟节点，并绑定render的this
-        const subTree = instance.render.call(proxy);
-        /**
-         * 1. 调用组件render后把结果再次给到patch
-         * 2. 再把对应的dom节点append到container
-         * 3. 把当前实例传过去，让子组件可以通过parent获取父组件实例
-         */
-        patch(null, subTree, container, instance, anchor);
-        /** 挂载当前的dom元素到$el
-         * 1. 当遍历完所有Component组件后，会调用processElement
-         * 2. 在processElement中，会创建dom元素，把创建的dom元素挂载到传入的vnode里面
-         * 3. 当前的dom元素也就是processElement中创建的dom元素
-         */
-        vnode.el = subTree.el;
-        // 更新初始化状态
-        instance.isMounted = true;
-        // 保存当前vnode
-        instance.preTree = subTree;
-      } else {
-        const { proxy, next, vnode } = instance;
-        if (next) {
-          // 保存当前的dom节点，因为新vnode没有走创建流程，所以没有el
-          next.el = vnode.el;
-          updateComponentPreRender(instance, next);
+    instance.runner = effect(
+      () => {
+        // 初始化vnode
+        if (!instance.isMounted) {
+          let { proxy, vnode } = instance;
+          // 通过render函数，获取render返回虚拟节点，并绑定render的this
+          const subTree = instance.render.call(proxy);
+          /**
+           * 1. 调用组件render后把结果再次给到patch
+           * 2. 再把对应的dom节点append到container
+           * 3. 把当前实例传过去，让子组件可以通过parent获取父组件实例
+           */
+          patch(null, subTree, container, instance, anchor);
+          /** 挂载当前的dom元素到$el
+           * 1. 当遍历完所有Component组件后，会调用processElement
+           * 2. 在processElement中，会创建dom元素，把创建的dom元素挂载到传入的vnode里面
+           * 3. 当前的dom元素也就是processElement中创建的dom元素
+           */
+          vnode.el = subTree.el;
+          // 更新初始化状态
+          instance.isMounted = true;
+          // 保存当前vnode
+          instance.preTree = subTree;
+        } else {
+          const { proxy, next, vnode } = instance;
+          if (next) {
+            // 保存当前的dom节点，因为新vnode没有走创建流程，所以没有el
+            next.el = vnode.el;
+            updateComponentPreRender(instance, next);
+          }
+          // 通过render函数，获取render返回虚拟节点，并绑定render的this
+          const nowTree = instance.render.call(proxy);
+          // 旧vnode
+          const preTree = instance.preTree;
+          // 更新旧的vnode
+          instance.preTree = nowTree;
+          // 对比新老vnode
+          patch(preTree, nowTree, container, instance, anchor);
         }
-        // 通过render函数，获取render返回虚拟节点，并绑定render的this
-        const nowTree = instance.render.call(proxy);
-        // 旧vnode
-        const preTree = instance.preTree;
-        // 更新旧的vnode
-        instance.preTree = nowTree;
-        // 对比新老vnode
-        patch(preTree, nowTree, container, instance, anchor);
+      },
+      {
+        scheduler() {
+          // 将本次 update 加入到任务队列中
+          queueJobs(instance.runner);
+        },
       }
-    });
+    );
   }
   function updateComponentPreRender(instance, nextVNode) {
     // 更新当前虚拟节点
