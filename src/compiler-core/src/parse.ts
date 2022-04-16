@@ -1,7 +1,7 @@
 /*
  * @Author: Lin ZeFan
  * @Date: 2022-04-10 10:45:42
- * @LastEditTime: 2022-04-16 16:56:00
+ * @LastEditTime: 2022-04-16 17:04:40
  * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\compiler-core\src\parse.ts
@@ -104,10 +104,10 @@ function parseElement(context: { source: string }, ancestors): any {
   ancestors.push(element);
   // 增加 parseChildren，储存包裹的内容
   element.children = parseChildren(context, ancestors);
-  // 循环结束，把当前tag弹出标签，进入下一个循环
+  // 循环结束，把当前tag删除
   ancestors.pop();
   /** 切除闭合标签
-   * 1. 当前source标签内容等于首部tag，说明是闭合标签，则进行切除
+   * 1. 当前tag等于首部tag，说明是闭合标签，则进行切除
    * 2. 不相等，则说明没有写闭合标签，报警告
    */
   if (startsWithEndTagOpen(context.source, element.tag)) {
@@ -171,10 +171,10 @@ function parseText(context: { source: string }): any {
 // 匹配是否结束标签
 function isEnd(context: { source: string }, ancestors: any) {
   const s = context.source;
-  /** 判断tag是结束标签
-   * 1. 判断是否标签，是标签进入循环
-   * 2. 从栈顶开始循环，栈是先入后出的，所以根标签会在最底部
-   * 3. 判断当前的标签的tag是否跟栈的tag相等，相等则说明当前tag内容已经推导结束，结束当前children循环，进入下一个循环
+  /** 是否结束标签
+   * 1. 判断是否</开头，是则进入循环
+   * 2. 从栈顶开始循环，栈是先入后出的，所以要从最底部开始循环
+   * 3. 判断当前的标签的tag是否跟栈的tag相等，相等则说明当前tag内容已经推导结束，需要结束当前children循环，进入下一个循环
    */
   if (s.startsWith("</")) {
     for (let i = ancestors.length - 1; i >= 0; i--) {
