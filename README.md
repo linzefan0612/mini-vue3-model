@@ -1,8 +1,8 @@
 <!--
  * @Author: Lin zefan
  * @Date: 2022-03-15 14:38:12
- * @LastEditTime: 2022-04-01 21:45:43
- * @LastEditors: Lin zefan
+ * @LastEditTime: 2022-04-16 23:11:18
+ * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\README.md
  *
@@ -28,7 +28,7 @@
 - [x] 支持 component emit
 - [x] 支持 proxy
 - [x] 可以在 render 函数中获取 setup 返回的对象
-- [ ] nextTick 的实现
+- [x] nextTick 的实现
 - [x] 支持 getCurrentInstance
 - [x] 支持 provide/inject
 - [x] 支持最基础的 slots
@@ -58,9 +58,9 @@
 
 ### compiler-core
 
-- [ ] 解析插值
-- [ ] 解析 element
-- [ ] 解析 text
+- [x] 解析插值
+- [x] 解析 element
+- [x] 解析 text
 
 ### runtime-dom
 

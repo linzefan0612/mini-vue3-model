@@ -1,7 +1,7 @@
 /*
  * @Author: Lin ZeFan
  * @Date: 2022-04-10 10:45:42
- * @LastEditTime: 2022-04-16 17:04:40
+ * @LastEditTime: 2022-04-17 11:45:51
  * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\compiler-core\src\parse.ts
@@ -29,6 +29,7 @@ function createContext(content: string) {
 function createRoot(children) {
   return {
     children,
+    type: NodeType.ROOT,
   };
 }
 

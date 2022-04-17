@@ -1,7 +1,7 @@
 /*
  * @Author: Lin ZeFan
  * @Date: 2022-04-10 10:45:42
- * @LastEditTime: 2022-04-16 23:08:05
+ * @LastEditTime: 2022-04-17 10:35:55
  * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\compiler-core\__tests__\transform.spec.ts
@@ -11,13 +11,6 @@ import { NodeType } from "../src/ast";
 import { baseParse } from "../src/parse";
 import { transform } from "../src/transform";
 describe("Compiler: transform", () => {
-  // test("should change text content", () => {
-  //   const ast = baseParse("<div>hi</div>");
-  //   transform(ast);
-  //   expect(ast.children[0].children[0].content).toEqual("hi mini-vue");
-  // });
-
-  // 改写测试
   test("should change text content", () => {
     const ast = baseParse("<div>hi</div>");
     // 外部提供处理
