@@ -7,7 +7,12 @@ export function render(_ctx, _cache) { return _toDisplayString('_ctx.message') }
 
 exports[`simple element 1`] = `
 "const { createElementVNode as _createElementVNode } = Vue
-export function render(_ctx, _cache) { return _createElementVNode('div') }"
+export function render(_ctx, _cache) { return _createElementVNode(div, null,  }"
 `;
 
 exports[`text 1`] = `"export function render(_ctx, _cache) { return 'hi' }"`;
+
+exports[`union 3 type 1`] = `
+"const { createElementVNode as _createElementVNode, toDisplayString as _toDisplayString } = Vue
+export function render(_ctx, _cache) { return _createElementVNode(div, null, 'hi,' + _toDisplayString('_ctx.message') }"
+`;
