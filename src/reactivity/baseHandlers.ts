@@ -1,13 +1,13 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-16 18:30:25
- * @LastEditTime: 2022-04-02 15:00:18
- * @LastEditors: Lin zefan
+ * @LastEditTime: 2022-04-20 21:02:44
+ * @LastEditors: Lin ZeFan
  * @Description:
- * @FilePath: windowmini-vue3windowsrcwindowreactivitywindowbaseHandlers.ts
+ * @FilePath: \mini-vue3\src\reactivity\baseHandlers.ts
  *
  */
-import { reactive, ReactiveEnum, readonly } from ".";
+import { reactive, ReactiveEnum, readonly } from "./reactive";
 import { extend, isObject } from "../shared";
 import { track, trigger } from "./effect";
 

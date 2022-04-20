@@ -1,4 +1,13 @@
-import { isReactive, shallowReactive } from "..";
+/*
+ * @Author: Lin ZeFan
+ * @Date: 2022-03-17 17:36:02
+ * @LastEditTime: 2022-04-20 21:02:02
+ * @LastEditors: Lin ZeFan
+ * @Description: 
+ * @FilePath: \mini-vue3\src\reactivity\test\shallowReadonly.spec.ts
+ * 
+ */
+import { isReactive, shallowReactive } from "../reactive";
 import { effect } from "../effect";
 
 describe("shallowReactive", () => {

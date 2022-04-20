@@ -1,15 +1,15 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-14 15:46:54
- * @LastEditTime: 2022-03-20 11:52:04
- * @LastEditors: Lin zefan
+ * @LastEditTime: 2022-04-20 21:02:34
+ * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\test\effect.spec.ts
  *
  */
 
 import { effect, stop } from "../effect";
-import { reactive } from "../index";
+import { reactive } from "../reactive";
 
 describe("effect", () => {
   /** 实现effect侦听

@@ -1,14 +1,14 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-14 15:46:54
- * @LastEditTime: 2022-03-17 17:55:30
- * @LastEditors: Lin zefan
+ * @LastEditTime: 2022-04-20 21:02:43
+ * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\test\reactive.spec.ts
  *
  */
 
-import { isReactive, reactive, isProxy } from "../index";
+import { isReactive, reactive, isProxy } from "../reactive";
 
 describe("reactive", () => {
   it("it-reactive", () => {

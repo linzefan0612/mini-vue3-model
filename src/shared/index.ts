@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-15 19:28:09
- * @LastEditTime: 2022-04-09 10:55:40
+ * @LastEditTime: 2022-04-20 21:59:05
  * @LastEditors: Lin ZeFan
  * @Description: 公用hook
  * @FilePath: \mini-vue3\src\shared\index.ts
@@ -54,3 +54,5 @@ export const EMPTY_OBJECT = {};
 export function isNumber(value) {
   return typeof value === "number" && !isNaN(value);
 }
+
+

@@ -1,13 +1,13 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-17 18:23:36
- * @LastEditTime: 2022-04-09 10:50:25
+ * @LastEditTime: 2022-04-20 21:02:47
  * @LastEditors: Lin ZeFan
  * @Description: ref
  * @FilePath: \mini-vue3\src\reactivity\ref.ts
  *
  */
-import { reactive } from ".";
+import { reactive } from "./reactive";
 import { isObject, hasChanged } from "../shared";
 import { isTracking, trackEffect, triggerEffect } from "./effect";
 

@@ -1,14 +1,14 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-04-09 11:59:44
+ * @LastEditTime: 2022-04-20 21:46:17
  * @LastEditors: Lin ZeFan
  * @Description: 处理组件类型
  * @FilePath: \mini-vue3\src\runtime-core\component.ts
  *
  */
 
-import { shallowReadonly } from "../reactivity/index";
+import { shallowReadonly } from "../reactivity/reactive";
 import { emit } from "./componentEmit";
 import { initProps } from "./componentProps";
 import { initSlots } from "./componentSlot";
@@ -130,9 +130,10 @@ function finishComponentSetup(instance) {
   // 挂载实例的render函数，取当前组件实例声明得render
   if (component.render) {
     instance.render = component.render;
+  } else if (component.template && compiler) {
+    // 没有写 render，但是写了template
+    instance.render = compiler(component.template);
   }
-  // TODO而没有 component.render 咋办捏，其实可以通过编译器来自动生成一个 render 函数
-  // 这里先不写
 }
 
 export function getCurrentInstance() {
@@ -141,4 +142,10 @@ export function getCurrentInstance() {
 
 function setCurrentInstance(instance) {
   currentInstance = instance;
+}
+
+let compiler;
+
+export function registerCompiler(_compiler) {
+  compiler = _compiler;
 }

@@ -1,10 +1,10 @@
-import { isReactive, isReadonly, reactive, readonly, isProxy } from "..";
+import { isReactive, isReadonly, reactive, readonly, isProxy } from "../reactive";
 
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-16 18:03:54
- * @LastEditTime: 2022-03-20 11:08:50
- * @LastEditors: Lin zefan
+ * @LastEditTime: 2022-04-20 21:02:42
+ * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\reactivity\test\readonly.spec.ts
  *

@@ -1,5 +1,14 @@
+/*
+ * @Author: Lin ZeFan
+ * @Date: 2022-03-18 17:22:23
+ * @LastEditTime: 2022-04-20 21:02:37
+ * @LastEditors: Lin ZeFan
+ * @Description: 
+ * @FilePath: \mini-vue3\src\reactivity\test\computed.spec.ts
+ * 
+ */
 import { computed } from "../computed";
-import { reactive } from "..";
+import { reactive } from "../reactive";
 
 describe("computed", () => {
   it("happy path", () => {

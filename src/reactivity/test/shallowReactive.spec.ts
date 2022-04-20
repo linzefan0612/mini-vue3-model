@@ -1,4 +1,13 @@
-import { isReadonly, shallowReadonly } from "..";
+/*
+ * @Author: Lin ZeFan
+ * @Date: 2022-03-20 11:24:38
+ * @LastEditTime: 2022-04-20 21:02:40
+ * @LastEditors: Lin ZeFan
+ * @Description: 
+ * @FilePath: \mini-vue3\src\reactivity\test\shallowReactive.spec.ts
+ * 
+ */
+import { isReadonly, shallowReadonly } from "../reactive";
 
 describe("shallowReadonly", () => {
   /** shallowReadonly

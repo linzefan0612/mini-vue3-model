@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:04:58
- * @LastEditTime: 2022-04-09 15:01:49
+ * @LastEditTime: 2022-04-20 22:32:12
  * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\runtime-core\render.ts
@@ -463,14 +463,19 @@ export function createRenderer(options) {
     setupRenderEffect(instance, container, anchor);
   }
 
+  function renderComponentInstance(instance) {
+    const { proxy } = instance;
+    return instance.render.call(proxy, proxy);
+  }
+
   function setupRenderEffect(instance, container, anchor) {
     instance.runner = effect(
       () => {
         // 初始化vnode
         if (!instance.isMounted) {
-          let { proxy, vnode } = instance;
-          // 通过render函数，获取render返回虚拟节点，并绑定render的this
-          const subTree = instance.render.call(proxy);
+          let { vnode } = instance;
+          // 通过render函数，获取render返回虚拟节点，并绑定render的this，并把this传出去
+          const subTree = renderComponentInstance(instance);
           /**
            * 1. 调用组件render后把结果再次给到patch
            * 2. 再把对应的dom节点append到container
@@ -488,14 +493,14 @@ export function createRenderer(options) {
           // 保存当前vnode
           instance.preTree = subTree;
         } else {
-          const { proxy, next, vnode } = instance;
+          const { next, vnode } = instance;
           if (next) {
             // 保存当前的dom节点，因为新vnode没有走创建流程，所以没有el
             next.el = vnode.el;
             updateComponentPreRender(instance, next);
           }
           // 通过render函数，获取render返回虚拟节点，并绑定render的this
-          const nowTree = instance.render.call(proxy);
+          const nowTree = renderComponentInstance(instance);
           // 旧vnode
           const preTree = instance.preTree;
           // 更新旧的vnode

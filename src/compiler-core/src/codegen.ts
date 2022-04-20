@@ -1,7 +1,7 @@
 /*
  * @Author: Lin ZeFan
  * @Date: 2022-04-17 10:40:19
- * @LastEditTime: 2022-04-17 16:32:08
+ * @LastEditTime: 2022-04-20 22:20:45
  * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\compiler-core\src\codegen.ts
@@ -16,7 +16,7 @@ import {
 } from "./runtimeHelpers";
 import { isArray, isString } from "./utils";
 
-export function codegen(ast) {
+export function generate(ast) {
   const context = createCodeGenContext();
   const { push } = context;
 
@@ -26,7 +26,7 @@ export function codegen(ast) {
   }
 
   const funcName = "render";
-  push(`export `);
+  push(`return `);
   const args = ["_ctx", "_cache"];
   const signature = args.join(", ");
   push(`function ${funcName}(${signature}) { `);
@@ -60,7 +60,7 @@ function genNode(node, context) {
 function genExpression(node, context) {
   // 处理 SIMPLE_EXPRESSION
   const { push } = context;
-  push(`'${node.content}'`);
+  push(`${node.content}`);
 }
 
 function genInterpolation(node, context) {
@@ -80,10 +80,11 @@ function genText(node, context) {
 function genElement(node, context) {
   const { push, helper } = context;
   const { tag, children, props } = node;
-  // push(`${helper(CREATE_ELEMENT_VNODE)}('${tag}')`);
   push(`${helper(CREATE_ELEMENT_VNODE)}(`);
   // 批量处理 tag，props 和 children，优化空值情况
   genNodeList(genNullable([tag, props, children]), context);
+
+  push(`)`);
 }
 
 function genNodeList(nodes, context) {
@@ -96,7 +97,7 @@ function genNodeList(nodes, context) {
      * 3. 如果是对象，给 genNode 检测类型
      */
     if (isString(node)) {
-      push(node);
+      push(`${node}`);
     } else if (isArray(node)) {
       for (let j = 0; j < node.length; j++) {
         const n = node[j];
@@ -153,7 +154,7 @@ function genFunctionPreamble(ast: any, context) {
   const { push, addLine } = context;
   // 因为是Symbol，需要用映射表匹配
   const aliasHelper = (s) =>
-    `${HelperNameMapping[s]} as _${HelperNameMapping[s]}`;
+    `${HelperNameMapping[s]} : _${HelperNameMapping[s]}`;
   // 处理头部引入
   push(`const { ${ast.helpers.map(aliasHelper).join(", ")} } = ${VueBinding}`);
   addLine();
