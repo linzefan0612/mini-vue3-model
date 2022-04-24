@@ -1,7 +1,7 @@
 /*
  * @Author: Lin zefan
  * @Date: 2022-03-21 22:08:11
- * @LastEditTime: 2022-04-20 21:46:17
+ * @LastEditTime: 2022-04-24 13:14:16
  * @LastEditors: Lin ZeFan
  * @Description: 处理组件类型
  * @FilePath: \mini-vue3\src\runtime-core\component.ts
@@ -132,6 +132,7 @@ function finishComponentSetup(instance) {
     instance.render = component.render;
   } else if (component.template && compiler) {
     // 没有写 render，但是写了template
+    // 使用了高阶函数，暴露了 codegen 方法
     instance.render = compiler(component.template);
   }
 }

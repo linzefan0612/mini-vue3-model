@@ -1,7 +1,7 @@
 /*
  * @Author: Lin ZeFan
  * @Date: 2022-04-16 22:33:45
- * @LastEditTime: 2022-04-17 16:18:02
+ * @LastEditTime: 2022-04-23 14:12:15
  * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\compiler-core\src\transform.ts
@@ -57,9 +57,9 @@ function traverseNode(node, context) {
   }
 
   let i = exitFns.length;
-  // 执行所有的退出函数
+  // 执行所有的退出函数，从右到左
   while (i--) {
-    exitFns[i]();
+    typeof exitFns[i] === "function" && exitFns[i]();
   }
 }
 
@@ -69,12 +69,16 @@ function traverseChildren(node: any, context: any) {
     traverseNode(children[i], context);
   }
 }
+
 function createdRootCodegen(root: any) {
-  const child = root.children[0];
-  // 在这里进行判断，如果说 children[0] 的类型是 ELEMENT，那么直接修改为 child.codegenNode
-  if (child.type === NodeType.ELEMENT) {
-    root.codegenNode = child.codegenNode;
-  } else {
-    root.codegenNode = root.children[0];
+  const { children } = root;
+  for (let index = 0; index < children.length; index++) {
+    const child = children[index];
+    // 在这里进行判断，如果说 child 的类型是 ELEMENT，那么直接取child.codegenNode
+    if (child.type === NodeType.ELEMENT) {
+      root.codegenNode = child.codegenNode;
+    } else {
+      root.codegenNode = child;
+    }
   }
 }

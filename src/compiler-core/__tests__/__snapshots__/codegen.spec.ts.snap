@@ -2,17 +2,17 @@
 
 exports[`interpolation 1`] = `
 "const { toDisplayString : _toDisplayString } = Vue
-return function render(_ctx, _cache) { return _toDisplayString(_ctx.message) )}"
+return function render(_ctx, _cache) { return _toDisplayString(_ctx.message) }"
 `;
 
 exports[`simple element 1`] = `
 "const { createElementVNode : _createElementVNode } = Vue
-return function render(_ctx, _cache) { return _createElementVNode('div', null,  )}"
+return function render(_ctx, _cache) { return _createElementVNode('div', null, ) }"
 `;
 
-exports[`text 1`] = `"return function render(_ctx, _cache) { return 'hi' )}"`;
+exports[`text 1`] = `"return function render(_ctx, _cache) { return 'hi' }"`;
 
 exports[`union 3 type 1`] = `
-"const { createElementVNode : _createElementVNode, toDisplayString : _toDisplayString } = Vue
-return function render(_ctx, _cache) { return _createElementVNode('div', null, 'hi,' + _toDisplayString(_ctx.message) )}"
+"const { toDisplayString : _toDisplayString, createElementVNode : _createElementVNode } = Vue
+return function render(_ctx, _cache) { return _createElementVNode('div', null, 'hi,' + _toDisplayString(_ctx.message)) }"
 `;

@@ -1,7 +1,7 @@
 /*
  * @Author: Lin ZeFan
  * @Date: 2022-04-17 10:40:19
- * @LastEditTime: 2022-04-20 22:20:45
+ * @LastEditTime: 2022-04-23 12:39:15
  * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\compiler-core\src\codegen.ts
@@ -84,6 +84,7 @@ function genElement(node, context) {
   // 批量处理 tag，props 和 children，优化空值情况
   genNodeList(genNullable([tag, props, children]), context);
 
+  // 每创建一个 createVNode，就要加上一个结束符号
   push(`)`);
 }
 

@@ -1,7 +1,7 @@
 /*
  * @Author: Lin ZeFan
  * @Date: 2022-04-10 10:45:42
- * @LastEditTime: 2022-04-20 20:46:19
+ * @LastEditTime: 2022-04-23 14:05:29
  * @LastEditors: Lin ZeFan
  * @Description:
  * @FilePath: \mini-vue3\src\compiler-core\__tests__\codegen.spec.ts
@@ -43,13 +43,13 @@ test("simple element", () => {
   expect(code).toMatchSnapshot();
 });
 
-test('union 3 type', () => {
-  const template = '<div>hi,{{message}}</div>'
-  const ast = baseParse(template)
+test("union 3 type", () => {
+  const template = "<div>hi,{{message}}</div>";
+  const ast = baseParse(template);
   transform(ast, {
     // 加入 transformText plugin
-    nodeTransforms: [transformElement, transformExpression, transformText],
-  })
-  const code = generate(ast)
-  expect(code).toMatchSnapshot()
-})
+    nodeTransforms: [transformExpression, transformElement, transformText],
+  });
+  const code = generate(ast);
+  expect(code).toMatchSnapshot();
+});
